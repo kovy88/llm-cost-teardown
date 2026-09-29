@@ -1,0 +1,100 @@
+{"id": "intent_001", "workload": "proj_intent_router", "input": "I forgot my password and cannot log in", "checks": [{"type": "exact", "value": "password_reset"}]}
+{"id": "intent_002", "workload": "proj_intent_router", "input": "The password reset email never arrived", "checks": [{"type": "exact", "value": "password_reset"}]}
+{"id": "intent_003", "workload": "proj_intent_router", "input": "Reset my account password please", "checks": [{"type": "exact", "value": "password_reset"}]}
+{"id": "intent_004", "workload": "proj_intent_router", "input": "Why was I charged twice on last month's invoice?", "checks": [{"type": "exact", "value": "billing_question"}]}
+{"id": "intent_005", "workload": "proj_intent_router", "input": "The VAT line on invoice 4412 looks wrong", "checks": [{"type": "exact", "value": "billing_question"}]}
+{"id": "intent_006", "workload": "proj_intent_router", "input": "Can you explain the seat overage on our bill?", "checks": [{"type": "exact", "value": "billing_question"}]}
+{"id": "intent_007", "workload": "proj_intent_router", "input": "Order 1842 is five days late, where is it?", "checks": [{"type": "exact", "value": "shipping_delay"}]}
+{"id": "intent_008", "workload": "proj_intent_router", "input": "Tracking for shipment 77-A still says label created", "checks": [{"type": "exact", "value": "shipping_delay"}]}
+{"id": "intent_009", "workload": "proj_intent_router", "input": "The parcel to Berlin has not moved in a week", "checks": [{"type": "exact", "value": "shipping_delay"}]}
+{"id": "intent_010", "workload": "proj_intent_router", "input": "I want to cancel the Pro plan at the end of the month", "checks": [{"type": "exact", "value": "cancel_plan"}]}
+{"id": "intent_011", "workload": "proj_intent_router", "input": "Please downgrade us to the free tier and stop billing", "checks": [{"type": "exact", "value": "cancel_plan"}]}
+{"id": "intent_012", "workload": "proj_intent_router", "input": "The dashboard export button returns a 500 error", "checks": [{"type": "exact", "value": "bug_report"}]}
+{"id": "intent_013", "workload": "proj_intent_router", "input": "CSV download of tickets is truncated after 100 rows", "checks": [{"type": "exact", "value": "bug_report"}]}
+{"id": "intent_014", "workload": "proj_intent_router", "input": "SSO login loops back to the password screen", "checks": [{"type": "exact", "value": "bug_report"}]}
+{"id": "intent_015", "workload": "proj_intent_router", "input": "Can we get a dark mode on the helpdesk inbox?", "checks": [{"type": "exact", "value": "feature_request"}]}
+{"id": "intent_016", "workload": "proj_intent_router", "input": "We need a webhook when a ticket is escalated", "checks": [{"type": "exact", "value": "feature_request"}]}
+{"id": "intent_017", "workload": "proj_intent_router", "input": "Order 2201 arrived damaged, I want a refund to the original card", "checks": [{"type": "exact", "value": "refund"}]}
+{"id": "intent_018", "workload": "proj_intent_router", "input": "Charge 9981 was a duplicate, refund it please", "checks": [{"type": "exact", "value": "refund"}]}
+{"id": "intent_019", "workload": "proj_intent_router", "input": "This is the third time we write about the same outage", "checks": [{"type": "exact", "value": "escalate"}]}
+{"id": "intent_020", "workload": "proj_intent_router", "input": "Please escalate ticket 551 to a manager today", "checks": [{"type": "exact", "value": "escalate"}]}
+{"id": "intent_021", "workload": "proj_intent_router", "input": "Unlock my account after too many failed logins", "checks": [{"type": "exact", "value": "password_reset"}]}
+{"id": "intent_022", "workload": "proj_intent_router", "input": "Weekend delivery for order 3309 never happened", "checks": [{"type": "exact", "value": "shipping_delay"}]}
+{"id": "intent_023", "workload": "proj_intent_router", "input": "We are leaving because the AI replies are too slow", "checks": [{"type": "exact", "value": "cancel_plan"}]}
+{"id": "intent_024", "workload": "proj_intent_router", "input": "Did the annual discount apply on invoice 1204?", "checks": [{"type": "exact", "value": "billing_question"}]}
+{"id": "intent_025", "workload": "proj_intent_router", "input": "Add Czech as a language for the ticket summaries", "checks": [{"type": "exact", "value": "feature_request"}]}
+{"id": "support_001", "workload": "proj_support_chat", "input": "Order 1842 was charged twice. Refund the extra charge to the original card.", "checks": [{"type": "contains_all", "value": ["1842", "refund"]}]}
+{"id": "support_002", "workload": "proj_support_chat", "input": "Ticket 551: customer cannot reset their password after SSO was enabled.", "checks": [{"type": "contains_all", "value": ["551", "password"]}]}
+{"id": "support_003", "workload": "proj_support_chat", "input": "Shipment 77-A to Berlin is stuck. Give the customer a new ETA.", "checks": [{"type": "contains_all", "value": ["77-A", "Berlin"]}]}
+{"id": "support_004", "workload": "proj_support_chat", "input": "Invoice 4412 VAT looks wrong for a Czech company. What should we reply?", "checks": [{"type": "contains_all", "value": ["4412", "VAT"]}]}
+{"id": "support_005", "workload": "proj_support_chat", "input": "Order 2201 arrived damaged. Customer wants a refund, not a replacement.", "checks": [{"type": "contains_all", "value": ["2201", "refund"]}]}
+{"id": "support_006", "workload": "proj_support_chat", "input": "Seat overage on the Pro plan: 42 seats billed, they only use 38.", "checks": [{"type": "contains_all", "value": ["42", "38"]}]}
+{"id": "support_007", "workload": "proj_support_chat", "input": "CSV export of tickets stops at 100 rows. Customer needs the full dump.", "checks": [{"type": "contains_all", "value": ["100", "export"]}]}
+{"id": "support_008", "workload": "proj_support_chat", "input": "Customer on ticket 908 asked for Czech language summaries.", "checks": [{"type": "contains_all", "value": ["908", "Czech"]}]}
+{"id": "support_009", "workload": "proj_support_chat", "input": "Charge 9981 is a duplicate of 9980. Refund 9981.", "checks": [{"type": "contains_all", "value": ["9981", "refund"]}]}
+{"id": "support_010", "workload": "proj_support_chat", "input": "Order 3309 weekend delivery never happened. What do we tell them?", "checks": [{"type": "contains_all", "value": ["3309", "weekend"]}]}
+{"id": "support_011", "workload": "proj_support_chat", "input": "SSO login loops back to the password screen for domain acme.cz.", "checks": [{"type": "contains_all", "value": ["acme.cz", "SSO"]}]}
+{"id": "support_012", "workload": "proj_support_chat", "input": "Ticket 112 wants to cancel Pro at month end and keep data for 30 days.", "checks": [{"type": "contains_all", "value": ["112", "cancel"]}]}
+{"id": "support_013", "workload": "proj_support_chat", "input": "Dashboard export button returns HTTP 500 for workspace wrk_9.", "checks": [{"type": "contains_all", "value": ["wrk_9", "500"]}]}
+{"id": "support_014", "workload": "proj_support_chat", "input": "Customer asks if invoice 1204 includes the annual discount.", "checks": [{"type": "contains_all", "value": ["1204", "discount"]}]}
+{"id": "support_015", "workload": "proj_support_chat", "input": "Escalate ticket 551 to a manager and mention the repeated outage.", "checks": [{"type": "contains_all", "value": ["551", "outage"]}]}
+{"id": "support_016", "workload": "proj_support_chat", "input": "Order 7720: customer paid, warehouse shows unpaid. Unblock shipment.", "checks": [{"type": "contains_all", "value": ["7720", "paid"]}]}
+{"id": "support_017", "workload": "proj_support_chat", "input": "Help the agent answer: refund policy is 14 days from delivery for order 640.", "checks": [{"type": "contains_all", "value": ["640", "14-day"]}]}
+{"id": "support_018", "workload": "proj_support_chat", "input": "Customer on ticket 77 reports the AI reply cited the wrong plan price.", "checks": [{"type": "contains_all", "value": ["77", "price"]}]}
+{"id": "summary_001", "workload": "proj_ticket_summaries", "input": "Ticket: billing, charged twice on order 1842, wants refund, tone frustrated.", "checks": [{"type": "contains_all", "value": ["1842", "refund"]}]}
+{"id": "summary_002", "workload": "proj_ticket_summaries", "input": "Ticket: shipping delay, order 3309, weekend slot missed, ask for credit.", "checks": [{"type": "contains_all", "value": ["3309", "weekend"]}]}
+{"id": "summary_003", "workload": "proj_ticket_summaries", "input": "Ticket: SSO loop for acme.cz, cannot log in, already tried reset.", "checks": [{"type": "contains_all", "value": ["acme.cz", "SSO"]}]}
+{"id": "summary_004", "workload": "proj_ticket_summaries", "input": "Ticket: cancel Pro plan, keep data 30 days, reason slow AI replies.", "checks": [{"type": "contains_all", "value": ["cancel", "30 days"]}]}
+{"id": "summary_005", "workload": "proj_ticket_summaries", "input": "Ticket: CSV export truncated at 100 rows, needs full dump today.", "checks": [{"type": "contains_all", "value": ["100", "export"]}]}
+{"id": "summary_006", "workload": "proj_ticket_summaries", "input": "Ticket: damaged order 2201, refund not replacement, photos attached.", "checks": [{"type": "contains_all", "value": ["2201", "refund"]}]}
+{"id": "summary_007", "workload": "proj_ticket_summaries", "input": "Ticket: invoice 4412 VAT for Czech company, reverse charge maybe.", "checks": [{"type": "contains_all", "value": ["4412", "VAT"]}]}
+{"id": "summary_008", "workload": "proj_ticket_summaries", "input": "Ticket: feature request dark mode on inbox, 12 votes from the team.", "checks": [{"type": "contains_all", "value": ["dark mode", "inbox"]}]}
+{"id": "summary_009", "workload": "proj_ticket_summaries", "input": "Ticket: escalate 551, third contact about the same outage.", "checks": [{"type": "contains_all", "value": ["551", "outage"]}]}
+{"id": "summary_010", "workload": "proj_ticket_summaries", "input": "Ticket: charge 9981 duplicate of 9980, refund requested.", "checks": [{"type": "contains_all", "value": ["9981", "refund"]}]}
+{"id": "summary_011", "workload": "proj_ticket_summaries", "input": "Ticket: seat overage 42 billed vs 38 active on Pro.", "checks": [{"type": "contains_all", "value": ["42", "38"]}]}
+{"id": "summary_012", "workload": "proj_ticket_summaries", "input": "Ticket: export button HTTP 500 on workspace wrk_9.", "checks": [{"type": "contains_all", "value": ["wrk_9", "500"]}]}
+{"id": "summary_013", "workload": "proj_ticket_summaries", "input": "Ticket: Czech language for summaries, ticket 908.", "checks": [{"type": "contains_all", "value": ["Czech", "908"]}]}
+{"id": "summary_014", "workload": "proj_ticket_summaries", "input": "Ticket: invoice 1204 missing annual discount line.", "checks": [{"type": "contains_all", "value": ["1204", "discount"]}]}
+{"id": "summary_015", "workload": "proj_ticket_summaries", "input": "Ticket: order 7720 paid in Stripe, warehouse still unpaid.", "checks": [{"type": "contains_all", "value": ["7720", "paid"]}]}
+{"id": "rag_001", "workload": "wrkspc_rag_answers", "input": "What is the refund window after delivery?", "checks": [{"type": "contains_all", "value": ["14 days", "delivery"]}]}
+{"id": "rag_002", "workload": "wrkspc_rag_answers", "input": "How do we reverse-charge VAT for a Czech VAT-registered company?", "checks": [{"type": "contains_all", "value": ["reverse charge", "VAT"]}]}
+{"id": "rag_003", "workload": "wrkspc_rag_answers", "input": "What is the SLA for Pro plan email replies?", "checks": [{"type": "contains_all", "value": ["4-hour", "Pro"]}]}
+{"id": "rag_004", "workload": "wrkspc_rag_answers", "input": "Can we keep account data after a plan is cancelled?", "checks": [{"type": "contains_all", "value": ["30 days", "deleted"]}]}
+{"id": "rag_005", "workload": "wrkspc_rag_answers", "input": "When should a ticket be escalated to a manager?", "checks": [{"type": "contains_all", "value": ["escalate", "outage"]}]}
+{"id": "rag_006", "workload": "wrkspc_rag_answers", "input": "Is weekend delivery guaranteed for orders placed on Friday?", "checks": [{"type": "contains_all", "value": ["weekend", "not guaranteed"]}]}
+{"id": "rag_007", "workload": "wrkspc_rag_answers", "input": "How do unused seats get credited?", "checks": [{"type": "contains_all", "value": ["unused seats", "credit"]}]}
+{"id": "rag_008", "workload": "wrkspc_rag_answers", "input": "What files can we attach to a damaged-goods claim?", "checks": [{"type": "contains_all", "value": ["photos", "claims"]}]}
+{"id": "rag_009", "workload": "wrkspc_rag_answers", "input": "Does SSO replace passwords for every member?", "checks": [{"type": "contains_all", "value": ["SSO", "passwords"]}]}
+{"id": "rag_010", "workload": "wrkspc_rag_answers", "input": "What is the export row limit in the dashboard?", "checks": [{"type": "contains_all", "value": ["100 rows", "export"]}]}
+{"id": "rag_011", "workload": "wrkspc_rag_answers", "input": "Which language can ticket summaries run in besides English?", "checks": [{"type": "contains_all", "value": ["Czech", "English"]}]}
+{"id": "rag_012", "workload": "wrkspc_rag_answers", "input": "Do annual plans show the discount as its own invoice line?", "checks": [{"type": "contains_all", "value": ["annual discount", "invoice"]}]}
+{"id": "rag_013", "workload": "wrkspc_rag_answers", "input": "What happens if Stripe says paid but warehouse says unpaid?", "checks": [{"type": "contains_all", "value": ["Stripe", "warehouse"]}]}
+{"id": "rag_014", "workload": "wrkspc_rag_answers", "input": "Is a replacement the default for damaged orders?", "checks": [{"type": "contains_all", "value": ["refund", "replacement"]}]}
+{"id": "rag_015", "workload": "wrkspc_rag_answers", "input": "Where is the ACS URL for SAML?", "checks": [{"type": "contains_all", "value": ["ACS URL", "SSO"]}]}
+{"id": "email_001", "workload": "wrkspc_email_drafts", "input": "Apologise for the delay on order 1842 and give a new Tuesday ETA.", "checks": [{"type": "contains_all", "value": ["1842", "Tuesday"]}]}
+{"id": "email_002", "workload": "wrkspc_email_drafts", "input": "Confirm refund of charge 9981 to the original card.", "checks": [{"type": "contains_all", "value": ["9981", "refund"]}]}
+{"id": "email_003", "workload": "wrkspc_email_drafts", "input": "Tell acme.cz we fixed the SSO loop and they can sign in again.", "checks": [{"type": "contains_all", "value": ["acme.cz", "SSO"]}]}
+{"id": "email_004", "workload": "wrkspc_email_drafts", "input": "Confirm Pro cancellation at month end and 30-day data retention.", "checks": [{"type": "contains_all", "value": ["cancel", "30 days"]}]}
+{"id": "email_005", "workload": "wrkspc_email_drafts", "input": "Ask for photos for the damaged order 2201 claim.", "checks": [{"type": "contains_all", "value": ["2201", "photos"]}]}
+{"id": "email_006", "workload": "wrkspc_email_drafts", "input": "Explain the 42 vs 38 seat overage and the coming credit.", "checks": [{"type": "contains_all", "value": ["42", "credit"]}]}
+{"id": "email_007", "workload": "wrkspc_email_drafts", "input": "Invite them to retry the CSV export after the 100-row cap is lifted.", "checks": [{"type": "contains_all", "value": ["100", "export"]}]}
+{"id": "email_008", "workload": "wrkspc_email_drafts", "input": "Confirm invoice 4412 will be reissued with reverse charge.", "checks": [{"type": "contains_all", "value": ["4412", "reverse charge"]}]}
+{"id": "email_009", "workload": "wrkspc_email_drafts", "input": "Reassure them ticket 551 is with a manager because of the repeated outage.", "checks": [{"type": "contains_all", "value": ["551", "outage"]}]}
+{"id": "email_010", "workload": "wrkspc_email_drafts", "input": "Confirm order 7720 is marked paid and will ship today.", "checks": [{"type": "contains_all", "value": ["7720", "ship"]}]}
+{"id": "email_011", "workload": "wrkspc_email_drafts", "input": "Tell them Czech summaries are on for ticket 908.", "checks": [{"type": "contains_all", "value": ["Czech", "908"]}]}
+{"id": "email_012", "workload": "wrkspc_email_drafts", "input": "Confirm the annual discount is now on invoice 1204.", "checks": [{"type": "contains_all", "value": ["1204", "discount"]}]}
+{"id": "contract_001", "workload": "wrkspc_contract_review", "input": "Flag the liability cap in clause 8.2 of this MSA.", "checks": [{"type": "contains_all", "value": ["8.2", "liability"]}]}
+{"id": "contract_002", "workload": "wrkspc_contract_review", "input": "Does clause 4 allow termination for convenience?", "checks": [{"type": "contains_all", "value": ["clause 4", "30 days"]}]}
+{"id": "contract_003", "workload": "wrkspc_contract_review", "input": "Is auto-renewal in the order form?", "checks": [{"type": "contains_all", "value": ["auto-renews", "60 days"]}]}
+{"id": "contract_004", "workload": "wrkspc_contract_review", "input": "What data processing terms apply to EU customers?", "checks": [{"type": "contains_all", "value": ["DPA", "SCCs"]}]}
+{"id": "contract_005", "workload": "wrkspc_contract_review", "input": "Does the non-solicit last after the contract ends?", "checks": [{"type": "contains_all", "value": ["non-solicit", "12 months"]}]}
+{"id": "contract_006", "workload": "wrkspc_contract_review", "input": "Highlight the payment term in clause 3.", "checks": [{"type": "contains_all", "value": ["clause 3", "net 30"]}]}
+{"id": "contract_007", "workload": "wrkspc_contract_review", "input": "Is there a most-favoured-customer clause?", "checks": [{"type": "contains_all", "value": ["no", "most-favoured"]}]}
+{"id": "contract_008", "workload": "wrkspc_contract_review", "input": "What happens to fees if they terminate for cause?", "checks": [{"type": "contains_all", "value": ["for cause", "refunded"]}]}
+{"id": "contract_009", "workload": "wrkspc_contract_review", "input": "Does clause 9 assign IP in custom prompts to the customer?", "checks": [{"type": "contains_all", "value": ["clause 9", "customer"]}]}
+{"id": "contract_010", "workload": "wrkspc_contract_review", "input": "Flag governing law.", "checks": [{"type": "contains_all", "value": ["England", "London"]}]}
+{"id": "sales_001", "workload": "proj_sales_copilot", "input": "Draft a one-liner why Pro is cheaper than three extra seats of Team.", "checks": [{"type": "contains_all", "value": ["Pro", "seats"]}]}
+{"id": "sales_002", "workload": "proj_sales_copilot", "input": "Counter a price objection: they compared us to a gateway dashboard.", "checks": [{"type": "contains_all", "value": ["eval set", "invoice"]}]}
+{"id": "sales_003", "workload": "proj_sales_copilot", "input": "Summarise the 14-day refund policy for a prospect who is nervous.", "checks": [{"type": "contains_all", "value": ["14-day", "refund"]}]}
+{"id": "sales_004", "workload": "proj_sales_copilot", "input": "Propose a close: annual plan with the discount on its own invoice line.", "checks": [{"type": "contains_all", "value": ["annual", "discount"]}]}
+{"id": "sales_005", "workload": "proj_sales_copilot", "input": "Reply to 'we already use Helicone'.", "checks": [{"type": "contains_all", "value": ["Helicone", "eval"]}]}

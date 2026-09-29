@@ -9,7 +9,7 @@ Request logs are optional. They turn the caching, duplicate-call and routing est
 You run the export yourself, and the admin key never leaves your machine.
 
 ```bash
-git clone <repo-url> && cd llm-cost-teardown && uv sync
+git clone https://github.com/kovy88/llm-cost-teardown && cd llm-cost-teardown && uv sync
 
 # OpenAI: an organization Admin API key (not a project key)
 OPENAI_ADMIN_KEY=sk-admin-... uv run llm-cost-teardown fetch openai --days 30

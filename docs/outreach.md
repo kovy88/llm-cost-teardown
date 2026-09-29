@@ -23,15 +23,16 @@ Hi {first_name},
 
 {one specific line: e.g. "Saw the new AI summary in {product}'s changelog."}
 
-I audit OpenAI / Anthropic API spend. You run one read-only export command (no prompts leave your machine), and within 48 hours I send back a USD estimate of what model migration, prompt caching, batching and routing would save, per feature. Here is what the report looks like: {link to sample report}.
+I audit OpenAI / Anthropic API spend. You run one read-only export command (no prompts leave your machine), and within 48 hours I send back a USD estimate of what model migration, prompt caching, batching and routing would save, per feature. Here is what the report looks like: https://github.com/kovy88/llm-cost-teardown/blob/main/docs/sample-report.md
 
 If the number is not worth acting on, I will tell you that too. Worth a look?
 
 Matěj
+koval.matej88@seznam.cz
 
 ## LinkedIn / X DM (≤ 300 characters)
 
-Hi {first_name}, I audit LLM API bills (OpenAI/Anthropic). One read-only export, no prompts shared, and in 48 h you get a USD savings estimate per feature. Free. Sample report: {link}. Interested?
+Hi {first_name}, I audit OpenAI/Anthropic API bills. One read-only export, no prompts, USD estimate in 48h. Free. github.com/kovy88/llm-cost-teardown
 
 ## Follow-up (4–5 days later, same thread)
 
@@ -49,7 +50,7 @@ You don't share prompts. The aggregate export is token counts per model and hour
 Every lever is labelled exact, measured or scenario. Modelled cost is reconciled against your own cost export. The guarantee is on the audit: under 3× its price in annual savings, you pay nothing.
 
 **"We're too small."**
-If your LLM spend is under about $3k/month, the audit probably won't pay for itself. Run the open-source tool yourself: {repo link}.
+If your LLM spend is under about $3k/month, the audit probably won't pay for itself. Run the open-source tool yourself: https://github.com/kovy88/llm-cost-teardown
 
 ## After a free estimate
 

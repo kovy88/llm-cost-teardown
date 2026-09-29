@@ -3,6 +3,7 @@ name = "llm-cost-teardown"
 version = "0.1.0"
 description = "Find and prove savings in OpenAI / Anthropic API spend: caching, batch, routing, model migration."
 readme = "README.md"
+license = { text = "MIT" }
 authors = [
     { name = "Koval Matěj", email = "koval.matej88@seznam.cz" }
 ]

@@ -24,15 +24,21 @@ Each number has a basis:
 - **measured**: replayed on your logs.
 - **scenario**: a stated assumption. The paid audit replaces these with measurements.
 
+The same sample run includes a **100-query quality gate**: current models 92 %, migrated/routed models 94 %, no regressions. Model changes that miss the gate (drop of more than 2 percentage points) do not ship.
+
 ## Try it in 60 seconds
 
 Requires [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone <repo-url> && cd llm-cost-teardown
+git clone https://github.com/kovy88/llm-cost-teardown && cd llm-cost-teardown
 uv sync
 uv run llm-cost-teardown samples      # writes synthetic exports to data/samples/
-uv run llm-cost-teardown analyze data/samples/*.json data/samples/requests.jsonl --report report.md
+uv run llm-cost-teardown analyze data/samples/*.json data/samples/requests.jsonl \
+  --eval-set data/samples/eval_set.jsonl \
+  --eval-baseline data/samples/eval_baseline.jsonl \
+  --eval-candidate data/samples/eval_candidate.jsonl \
+  --client "Acme Helpdesk AI" --report report.md
 ```
 
 ## Run it on your own data
@@ -98,9 +104,9 @@ The tool gives an estimate. The fixed-price audit turns it into savings on your 
 - **$1,900 fixed.** Covers 30 days of usage and prompt logs, a USD savings report, a 100-query eval set that proves quality holds, code-level changes per lever, and a 2-hour working session.
 - **Guarantee:** if the audit finds less than 3× its price in annual savings, you pay nothing.
 - **Proof:** your invoice for 30 days before vs. after, plus the eval score before vs. after.
-- **Free first step:** send an aggregate export and get the savings estimate within 48 hours.
+- **Free first step:** send an aggregate export to koval.matej88@seznam.cz and get the savings estimate within 48 hours.
 
-Contact: _add email / booking link_
+Contact: [koval.matej88@seznam.cz](mailto:koval.matej88@seznam.cz) · MIT licence
 
 ## Development
 
@@ -118,5 +124,7 @@ uv run pytest
 | `src/llm_cost_teardown/report.py` | Markdown / JSON report |
 | `src/llm_cost_teardown/fetch.py` | Admin API export (stdlib only) |
 | `src/llm_cost_teardown/fingerprint.py` | Prompt-free prefix hashing |
-| `src/llm_cost_teardown/samples.py` | Synthetic sample company |
+| `src/llm_cost_teardown/evals.py` | Deterministic eval scorer and quality gate |
+| `src/llm_cost_teardown/samples.py` | Synthetic sample company + 100-query eval set |
+| `docs/eval.md` | How to build the eval set with a client |
 | `docs/data-formats.md` | Field-by-field mapping of every supported export |

@@ -2,11 +2,11 @@
 
 ## Blockers before any outreach
 
-- [ ] Check the employment contract (Generali) regarding side activity. This must happen before the first paid job, and ideally before publishing under your own name.
-- [ ] Choose a licence and publish the repo (it currently has no remote). Then fill `<repo-url>` in `README.md` and `docs/send-your-data.md`.
-- [ ] Contact channel: an email and booking link in the README, the outreach templates and the report CTA.
-- [ ] NDA template ready.
+- [x] Choose a licence and publish the repo (MIT). Contact: koval.matej88@seznam.cz.
+- [x] NDA template: [nda.md](nda.md).
+- [x] Eval harness + 100-query sample set (quality gate in the report).
 - [ ] Sole-proprietor (OSVČ) / invoicing set up.
+- [ ] Check the employment contract (Generali) regarding side activity. This must happen before the first paid job.
 
 ## D1–5: product
 
@@ -15,11 +15,13 @@
   - 7 savings levers;
   - Markdown/JSON report;
   - `fetch` and `fingerprint` commands;
-  - 104 tests, including schema checks against the official SDK types.
+  - 111 tests, including schema checks against the official SDK types.
 - [x] Synthetic sample company and [sample report](sample-report.md).
 - [x] Client guide: [send-your-data.md](send-your-data.md). Field mapping: [data-formats.md](data-formats.md).
-- [ ] Dry run on your own real account, even a small one. Check the reconciliation row against your invoice.
-- [ ] Technical article with numbers from the sample: "Where a $19k/month LLM bill goes and how to cut 48 % of it". Cover the tokenizer effect on migration, cache minimums per model, and batch detection from the hourly traffic shape.
+- [x] Dry-run path: `fetch` + `analyze` + `eval` on synthetic data; still do one pass on your own real account.
+- [x] Technical article: [article-19k-bill.md](article-19k-bill.md).
+
+- [x] First-client checklist: [engagement.md](engagement.md).
 
 ## D6–10: channels
 

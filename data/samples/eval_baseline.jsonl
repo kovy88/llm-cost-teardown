@@ -1,0 +1,100 @@
+{"id": "intent_001", "model": "gpt-5-mini", "output": "password_reset"}
+{"id": "intent_002", "model": "gpt-5-mini", "output": "password_reset"}
+{"id": "intent_003", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_004", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_005", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_006", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_007", "model": "gpt-5-mini", "output": "shipping_delay"}
+{"id": "intent_008", "model": "gpt-5-mini", "output": "shipping_delay"}
+{"id": "intent_009", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_010", "model": "gpt-5-mini", "output": "cancel_plan"}
+{"id": "intent_011", "model": "gpt-5-mini", "output": "cancel_plan"}
+{"id": "intent_012", "model": "gpt-5-mini", "output": "bug_report"}
+{"id": "intent_013", "model": "gpt-5-mini", "output": "bug_report"}
+{"id": "intent_014", "model": "gpt-5-mini", "output": "bug_report"}
+{"id": "intent_015", "model": "gpt-5-mini", "output": "feature_request"}
+{"id": "intent_016", "model": "gpt-5-mini", "output": "feature_request"}
+{"id": "intent_017", "model": "gpt-5-mini", "output": "refund"}
+{"id": "intent_018", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_019", "model": "gpt-5-mini", "output": "escalate"}
+{"id": "intent_020", "model": "gpt-5-mini", "output": "escalate"}
+{"id": "intent_021", "model": "gpt-5-mini", "output": "password_reset"}
+{"id": "intent_022", "model": "gpt-5-mini", "output": "shipping_delay"}
+{"id": "intent_023", "model": "gpt-5-mini", "output": "cancel_plan"}
+{"id": "intent_024", "model": "gpt-5-mini", "output": "billing_question"}
+{"id": "intent_025", "model": "gpt-5-mini", "output": "feature_request"}
+{"id": "support_001", "model": "gpt-5.4", "output": "I can look into your billing."}
+{"id": "support_002", "model": "gpt-5.4", "output": "For ticket 551, send a password reset from the SSO-linked account and confirm the identity provider mapping."}
+{"id": "support_003", "model": "gpt-5.4", "output": "Shipment 77-A to Berlin is delayed; share a new ETA and offer a credit if it slips."}
+{"id": "support_004", "model": "gpt-5.4", "output": "Invoice 4412: confirm the Czech VAT ID, then reissue with the reverse-charge line if they are VAT registered."}
+{"id": "support_005", "model": "gpt-5.4", "output": "Offer a replacement for the damaged parcel."}
+{"id": "support_006", "model": "gpt-5.4", "output": "The Pro plan billed 42 seats; if 38 are active, remove the unused seats and credit the difference."}
+{"id": "support_007", "model": "gpt-5.4", "output": "The CSV export is capped at 100 rows; trigger a full ticket dump from the admin export job."}
+{"id": "support_008", "model": "gpt-5.4", "output": "On ticket 908, enable Czech as the summary language and regenerate the last replies."}
+{"id": "support_009", "model": "gpt-5.4", "output": "Refund duplicate charge 9981; leave 9980 in place."}
+{"id": "support_010", "model": "gpt-5.4", "output": "Order 3309 missed the weekend window; rebook delivery and add a shipping credit."}
+{"id": "support_011", "model": "gpt-5.4", "output": "For acme.cz SSO, check the ACS URL; the password-screen loop is a misconfigured IdP."}
+{"id": "support_012", "model": "gpt-5.4", "output": "Cancel the Pro plan at month end for ticket 112 and keep the account data for 30 days."}
+{"id": "support_013", "model": "gpt-5.4", "output": "The export button on workspace wrk_9 returns HTTP 500; file a bug and send a manual CSV meanwhile."}
+{"id": "support_014", "model": "gpt-5.4", "output": "Invoice 1204 should show the annual discount as a separate line; if missing, reissue it."}
+{"id": "support_015", "model": "gpt-5.4", "output": "Escalate ticket 551 to a manager and note this is a repeated outage."}
+{"id": "support_016", "model": "gpt-5.4", "output": "Payment for order 7720 cleared; mark it paid in the warehouse system and unblock shipment."}
+{"id": "support_017", "model": "gpt-5.4", "output": "Order 640 is inside the 14-day refund window from delivery; approve if unused."}
+{"id": "support_018", "model": "gpt-5.4", "output": "On ticket 77, correct the plan price in the AI reply and do not quote list prices without checking billing."}
+{"id": "summary_001", "model": "gpt-4o", "output": "Customer asked about billing."}
+{"id": "summary_002", "model": "gpt-4o", "output": "Shipping: order 3309 missed the weekend slot; customer asks for a credit."}
+{"id": "summary_003", "model": "gpt-4o", "output": "Auth: SSO loop for acme.cz blocks login; password reset already tried."}
+{"id": "summary_004", "model": "gpt-4o", "output": "Cancel Pro, keep data 30 days; reason is slow AI replies."}
+{"id": "summary_005", "model": "gpt-4o", "output": "Bug: CSV export truncates at 100 rows; full dump needed today."}
+{"id": "summary_006", "model": "gpt-4o", "output": "Damaged order 2201; customer wants a refund not a replacement; photos attached."}
+{"id": "summary_007", "model": "gpt-4o", "output": "Invoice 4412 VAT query for a Czech company; reverse charge may apply."}
+{"id": "summary_008", "model": "gpt-4o", "output": "Feature request: dark mode on the inbox (12 team votes)."}
+{"id": "summary_009", "model": "gpt-4o", "output": "Escalate ticket 551; third contact about the same outage."}
+{"id": "summary_010", "model": "gpt-4o", "output": "Duplicate charge 9981 of 9980; refund requested."}
+{"id": "summary_011", "model": "gpt-4o", "output": "Seat overage: 42 billed, 38 active on Pro; credit the unused seats."}
+{"id": "summary_012", "model": "gpt-4o", "output": "Bug: export button returns HTTP 500 on workspace wrk_9."}
+{"id": "summary_013", "model": "gpt-4o", "output": "Request: Czech language summaries on ticket 908."}
+{"id": "summary_014", "model": "gpt-4o", "output": "Invoice 1204 is missing the annual discount line."}
+{"id": "summary_015", "model": "gpt-4o", "output": "Order 7720 is paid in Stripe but warehouse still shows unpaid."}
+{"id": "rag_001", "model": "claude-sonnet-4-5", "output": "You can return things if you change your mind."}
+{"id": "rag_002", "model": "claude-sonnet-4-5", "output": "For a Czech VAT-registered buyer, issue reverse charge and no Czech VAT. Source: tax FAQ."}
+{"id": "rag_003", "model": "claude-sonnet-4-5", "output": "Pro plan email replies have a 4-hour business-hours SLA. Source: support SLA."}
+{"id": "rag_004", "model": "claude-sonnet-4-5", "output": "Cancelled accounts keep data for 30 days, then it is deleted. Source: retention policy."}
+{"id": "rag_005", "model": "claude-sonnet-4-5", "output": "Escalate after two failed resolutions or on a repeated outage. Source: escalation playbook."}
+{"id": "rag_006", "model": "claude-sonnet-4-5", "output": "Weekend delivery is not guaranteed; Friday orders ship next business day. Source: shipping."}
+{"id": "rag_007", "model": "claude-sonnet-4-5", "output": "Remove unused seats in billing; a credit appears on the next invoice. Source: seating guide."}
+{"id": "rag_008", "model": "claude-sonnet-4-5", "output": "Attach photos of the parcel and item; claims without photos are delayed. Source: claims policy."}
+{"id": "rag_009", "model": "claude-sonnet-4-5", "output": "When SSO is enforced, members of that domain must sign in with SSO, not passwords. Source: SSO docs."}
+{"id": "rag_010", "model": "claude-sonnet-4-5", "output": "Dashboard CSV export is limited to 100 rows; use the admin full dump for more. Source: export docs."}
+{"id": "rag_011", "model": "claude-sonnet-4-5", "output": "Summaries currently support English and Czech. Source: language settings."}
+{"id": "rag_012", "model": "claude-sonnet-4-5", "output": "Yes, the annual discount must appear as its own invoice line. Source: invoicing."}
+{"id": "rag_013", "model": "claude-sonnet-4-5", "output": "Trust Stripe: mark paid, unblock shipment, then fix the warehouse flag. Source: payments."}
+{"id": "rag_014", "model": "claude-sonnet-4-5", "output": "No. Offer a refund or replacement; refund if they refuse replacement. Source: claims."}
+{"id": "rag_015", "model": "claude-sonnet-4-5", "output": "The SAML ACS URL is in organisation settings under SSO. Source: SSO docs."}
+{"id": "email_001", "model": "claude-haiku-4-5", "output": "Sorry for the wait, we are looking into it."}
+{"id": "email_002", "model": "claude-haiku-4-5", "output": "We refunded charge 9981 to the original card. It can take a few days to show on the statement."}
+{"id": "email_003", "model": "claude-haiku-4-5", "output": "The SSO loop for acme.cz is fixed. You can sign in again with your company identity provider."}
+{"id": "email_004", "model": "claude-haiku-4-5", "output": "Your Pro plan will cancel at month end. We keep the data for 30 days if you change your mind."}
+{"id": "email_005", "model": "claude-haiku-4-5", "output": "Please send photos of damaged order 2201 so we can process the claim."}
+{"id": "email_006", "model": "claude-haiku-4-5", "output": "You were billed for 42 seats and 38 are active. We will credit the unused seats on the next invoice."}
+{"id": "email_007", "model": "claude-haiku-4-5", "output": "The 100-row CSV cap is lifted. Please retry the export; you should get the full ticket dump."}
+{"id": "email_008", "model": "claude-haiku-4-5", "output": "Invoice 4412 will be reissued with reverse charge and no Czech VAT."}
+{"id": "email_009", "model": "claude-haiku-4-5", "output": "Ticket 551 is with a manager because this is a repeated outage. We will update you today."}
+{"id": "email_010", "model": "claude-haiku-4-5", "output": "Order 7720 is marked paid and will ship today. Tracking follows once the label is created."}
+{"id": "email_011", "model": "claude-haiku-4-5", "output": "Czech summaries are now on for ticket 908. Reload the ticket to see the new text."}
+{"id": "email_012", "model": "claude-haiku-4-5", "output": "Invoice 1204 now includes the annual discount as its own line. A copy is attached."}
+{"id": "contract_001", "model": "claude-opus-4-1", "output": "Clause 8.2 caps liability at 12 months of fees. Flag it before signing."}
+{"id": "contract_002", "model": "claude-opus-4-1", "output": "Clause 4 allows termination for convenience with 30 days' notice."}
+{"id": "contract_003", "model": "claude-opus-4-1", "output": "The order form auto-renews for 12 months unless notice is given 60 days prior."}
+{"id": "contract_004", "model": "claude-opus-4-1", "output": "EU customers are covered by the DPA in schedule 2, including SCCs."}
+{"id": "contract_005", "model": "claude-opus-4-1", "output": "The non-solicit survives for 12 months after the contract ends."}
+{"id": "contract_006", "model": "claude-opus-4-1", "output": "Clause 3 sets payment at net 30 from invoice date."}
+{"id": "contract_007", "model": "claude-opus-4-1", "output": "There is no most-favoured-customer clause in this draft."}
+{"id": "contract_008", "model": "claude-opus-4-1", "output": "If they terminate for cause, prepaid fees for unused months are refunded."}
+{"id": "contract_009", "model": "claude-opus-4-1", "output": "Clause 9 assigns IP in custom prompts and eval sets to the customer."}
+{"id": "contract_010", "model": "claude-opus-4-1", "output": "Governing law is England and Wales, courts of London. Flag if they expected Czech law."}
+{"id": "sales_001", "model": "gpt-6-astra", "output": "Pro is cheaper than three extra Team seats once you pass 38 people, because unused Team seats still bill."}
+{"id": "sales_002", "model": "gpt-6-astra", "output": "A gateway shows the bill; Pro proves quality on an eval set so the invoice drops."}
+{"id": "sales_003", "model": "gpt-6-astra", "output": "If it is not unused after delivery, the 14-day refund does not apply; if it is, they get the money back."}
+{"id": "sales_004", "model": "gpt-6-astra", "output": "Close on the annual plan and show the discount as its own invoice line so finance can see it."}
+{"id": "sales_005", "model": "gpt-6-astra", "output": "Helicone is useful. It does not rewrite the calls or gate model changes with an eval. That is the gap."}

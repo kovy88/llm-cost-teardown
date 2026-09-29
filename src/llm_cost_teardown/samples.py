@@ -1,10 +1,11 @@
 """Synthetic sample exports for a fictional company ("Acme Helpdesk AI").
 
 Produces files in the exact vendor formats the loader reads:
-- openai_usage.json      OpenAI Usage API pages (/v1/organization/usage/completions, 1h buckets)
-- anthropic_usage.json   Anthropic Usage Report pages (/v1/organizations/usage_report/messages, 1h buckets)
-- requests.jsonl         request-level log, fingerprinted (no prompt text), session-sampled
-- requests_raw_small.jsonl  a few raw log lines with request bodies, to demo `fingerprint`
+- openai_usage.json / anthropic_usage.json  vendor usage pages
+- openai_costs.json / anthropic_costs.json  vendor cost pages
+- requests.jsonl                            fingerprinted request log
+- requests_raw_small.jsonl                  a few raw log lines, to demo `fingerprint`
+- eval_set.jsonl / eval_baseline.jsonl / eval_candidate.jsonl  100-query quality gate
 
 All text is random filler. Never put client data in data/samples/.
 """
@@ -16,6 +17,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from llm_cost_teardown.eval_samples import write_eval_samples
 from llm_cost_teardown.fingerprint import fingerprint_log_line
 
 WORDS = (
@@ -475,4 +477,5 @@ def write_samples(out_dir: Path, end: datetime | None = None, days: int = 30) ->
         path = out_dir / name
         path.write_text(json.dumps(pages, separators=(",", ":")))
         written.append(path)
+    written.extend(write_eval_samples(out_dir))
     return written

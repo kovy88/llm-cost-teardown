@@ -20,7 +20,7 @@ Python 3.12, uv, pandas, pytest, ruff. Use `uv run ruff check --fix && uv run ru
 If an API is needed, FastAPI. Never use pip directly.
 
 ## Layout
-- `src/llm_cost_teardown/` — analyzer (usage loader, savings estimators, report)
+- `src/llm_cost_teardown/` — analyzer (usage loader, savings estimators, eval gate, report)
 - `docs/offer.md`, `docs/plan-30d.md`, `docs/outreach.md` — sales material
-- `docs/send-your-data.md` (client export guide), `docs/data-formats.md` (verified field mapping), `docs/sample-report.md` (regenerate with `analyze data/samples/*.json data/samples/requests.jsonl`)
+- `docs/send-your-data.md` (client export guide), `docs/data-formats.md` (verified field mapping), `docs/eval.md` (quality gate), `docs/sample-report.md` (regenerate with `analyze data/samples/*.json data/samples/requests.jsonl` plus the eval files)
 - `data/samples/` — synthetic sample exports only

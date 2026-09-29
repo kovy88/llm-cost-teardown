@@ -4,8 +4,10 @@ import math
 import pandas as pd
 
 from llm_cost_teardown import pricing
-from llm_cost_teardown.analyzer import AUDIT_PRICE_USD, GUARANTEE_MULTIPLE, Analysis
+from llm_cost_teardown.analyzer import Analysis
 from llm_cost_teardown.estimators import Lever
+from llm_cost_teardown.evals import Comparison, rate_label, regressions, workload_rows
+from llm_cost_teardown.meta import AUDIT_PRICE_USD, CONTACT_EMAIL, GUARANTEE_MULTIPLE
 
 METHOD_NOTE = {
     "exact": "follows from list prices alone",
@@ -72,6 +74,56 @@ def _lever_table(lever: Lever) -> str:
         ["Model", "Monthly cost", "Base saving / month"],
         [[f"`{r['model']}`", money(r["monthly_cost"]), money(r["saving_base"])] for r in rows],
     )
+
+
+def _eval_section(c: Comparison) -> list[str]:
+    gate = "PASS" if c.gate_pass else "FAIL"
+    sign = "+" if c.delta >= 0 else ""
+    baseline_models = ", ".join(f"`{m}`" for m in c.baseline.models) or "baseline"
+    candidate_models = ", ".join(f"`{m}`" for m in c.candidate.models) or "candidate"
+    lines = [
+        "## Quality gate (eval set)",
+        "",
+        f"{c.baseline.n} queries scored with a deterministic rubric (exact match, required phrases). "
+        "The set is built with the client from sampled traffic; production prompts stay on their machine.",
+        "",
+        table(
+            ["", "Pass rate", "Models"],
+            [
+                ["Baseline (current)", rate_label(c.baseline), baseline_models],
+                ["Candidate (after levers)", rate_label(c.candidate), candidate_models],
+                [
+                    f"**Delta / gate (tolerance {pct(c.tolerance)})**",
+                    f"**{sign}{c.delta:.0%} · {gate}**",
+                    "candidate must stay within tolerance of baseline",
+                ],
+            ],
+            "lll",
+        ),
+        "",
+        "### By workload",
+        "",
+        table(
+            ["Workload", "Baseline", "Candidate", "Delta"],
+            [[f"`{w}`", b, cand, delta] for w, b, cand, delta in workload_rows(c)],
+            "lrrr",
+        ),
+        "",
+    ]
+    dropped = regressions(c)
+    if dropped:
+        lines += [
+            "Items the candidate failed that the baseline passed:",
+            "",
+            *[f"- `{item.id}` ({item.workload}): {', '.join(item.failed_checks)}" for item in dropped[:8]],
+            "",
+        ]
+    elif c.gate_pass:
+        lines += [
+            "No regressions: every query the baseline passed, the candidate passed too.",
+            "",
+        ]
+    return lines
 
 
 def render_markdown(a: Analysis, internal: bool = False) -> str:
@@ -218,6 +270,9 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
             "",
         ]
 
+    if a.eval_comparison is not None:
+        out += _eval_section(a.eval_comparison)
+
     out += [
         "## How the numbers were produced",
         "",
@@ -241,11 +296,19 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
         "",
         f"The fixed-price audit ({money(AUDIT_PRICE_USD)}) turns the scenario rows into measurements: 30 days of "
         "usage and prompt logs, a 100-query eval set that proves quality holds, code-level changes per lever and "
-        "a 2-hour working session. If the audit finds less than "
+        f"a 2-hour working session. If the audit finds less than "
         f"{GUARANTEE_MULTIPLE}x its price in annual savings, you pay nothing.",
+        "",
+        f"Send a 30-day aggregate export to {CONTACT_EMAIL} (no prompts). Free estimate in 48 hours.",
         "",
     ]
     return "\n".join(out)
+
+
+def render_eval_report(c: Comparison) -> str:
+    body = _eval_section(c)
+    body[0] = "# Eval comparison"
+    return "\n".join(body) + "\n"
 
 
 def to_json(a: Analysis) -> str:
@@ -280,4 +343,14 @@ def to_json(a: Analysis) -> str:
         "by_token_type": a.by_token_type,
         "warnings": a.warnings,
     }
+    if a.eval_comparison is not None:
+        ev = a.eval_comparison
+        payload["eval"] = {
+            "baseline_rate": ev.baseline.rate,
+            "candidate_rate": ev.candidate.rate,
+            "delta": ev.delta,
+            "gate_pass": ev.gate_pass,
+            "tolerance": ev.tolerance,
+            "n": ev.baseline.n,
+        }
     return json.dumps(payload, indent=2)

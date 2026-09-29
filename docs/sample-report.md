@@ -1,4 +1,4 @@
-# LLM cost teardown - Acme Helpdesk AI (synthetic)
+# LLM cost teardown - Acme Helpdesk AI
 
 _Generated 2026-09-29 · usage 2026-08-27 to 2026-09-26 (30 days) · list prices verified 2026-09-29_
 
@@ -205,6 +205,30 @@ What to change:
 
 Differences come from negotiated discounts, credits, long-context surcharges on aggregate data and usage types outside chat/messages (embeddings, images, audio).
 
+## Quality gate (eval set)
+
+100 queries scored with a deterministic rubric (exact match, required phrases). The set is built with the client from sampled traffic; production prompts stay on their machine.
+
+|  | Pass rate | Models |
+| :--- | :--- | :--- |
+| Baseline (current) | 92% (92/100) | `claude-haiku-4-5`, `claude-opus-4-1`, `claude-sonnet-4-5`, `gpt-4o`, `gpt-5-mini`, `gpt-5.4`, `gpt-6-astra` |
+| Candidate (after levers) | 94% (94/100) | `claude-haiku-4-5`, `claude-opus-5-5`, `claude-sonnet-5-5`, `gpt-6-astra`, `gpt-6-luna`, `gpt-6.1-sol` |
+| **Delta / gate (tolerance 2%)** | **+2% · PASS** | candidate must stay within tolerance of baseline |
+
+### By workload
+
+| Workload | Baseline | Candidate | Delta |
+| :--- | ---: | ---: | ---: |
+| `proj_intent_router` | 88% (22/25) | 92% (23/25) | +4% |
+| `proj_sales_copilot` | 100% (5/5) | 100% (5/5) | +0% |
+| `proj_support_chat` | 89% (16/18) | 94% (17/18) | +6% |
+| `proj_ticket_summaries` | 93% (14/15) | 93% (14/15) | +0% |
+| `wrkspc_contract_review` | 100% (10/10) | 100% (10/10) | +0% |
+| `wrkspc_email_drafts` | 92% (11/12) | 92% (11/12) | +0% |
+| `wrkspc_rag_answers` | 93% (14/15) | 93% (14/15) | +0% |
+
+No regressions: every query the baseline passed, the candidate passed too.
+
 ## How the numbers were produced
 
 - Usage is priced with per-model list prices read from the vendor pricing pages on 2026-09-29 (OpenAI and Anthropic, standard tier; batch, fast mode, data residency and long-context rules applied where the export shows them).
@@ -216,3 +240,5 @@ Differences come from negotiated discounts, credits, long-context surcharges on 
 ## Next step
 
 The fixed-price audit ($1,900) turns the scenario rows into measurements: 30 days of usage and prompt logs, a 100-query eval set that proves quality holds, code-level changes per lever and a 2-hour working session. If the audit finds less than 3x its price in annual savings, you pay nothing.
+
+Send a 30-day aggregate export to koval.matej88@seznam.cz (no prompts). Free estimate in 48 hours.

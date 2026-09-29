@@ -8,10 +8,9 @@ import pandas as pd
 
 from llm_cost_teardown import pricing
 from llm_cost_teardown.estimators import Context, Lever, combine, run_levers
+from llm_cost_teardown.evals import Comparison
+from llm_cost_teardown.meta import AUDIT_PRICE_USD, GUARANTEE_MULTIPLE
 from llm_cost_teardown.usage import UsageData, load_usage, period_days, total_input
-
-AUDIT_PRICE_USD = 1900
-GUARANTEE_MULTIPLE = 3
 
 
 @dataclass
@@ -29,6 +28,7 @@ class Analysis:
     reconciliation: pd.DataFrame | None
     generated_at: datetime
     warnings: list[str] = field(default_factory=list)
+    eval_comparison: Comparison | None = None
 
     @property
     def annual(self) -> dict[str, float]:
@@ -107,7 +107,12 @@ def _reconcile(data: UsageData, spend: pd.DataFrame) -> pd.DataFrame | None:
     return pd.DataFrame(rows)
 
 
-def analyze(paths: Path | Iterable[Path], client: str = "", batchable: Iterable[str] = ()) -> Analysis:
+def analyze(
+    paths: Path | Iterable[Path],
+    client: str = "",
+    batchable: Iterable[str] = (),
+    eval_comparison: Comparison | None = None,
+) -> Analysis:
     data = load_usage(paths)
     frame = data.frame
     spend = _select_spend(frame)
@@ -143,6 +148,7 @@ def analyze(paths: Path | Iterable[Path], client: str = "", batchable: Iterable[
         reconciliation=_reconcile(data, spend),
         generated_at=datetime.now(UTC),
         warnings=warnings,
+        eval_comparison=eval_comparison,
     )
 
 
@@ -164,6 +170,12 @@ def summary_text(a: Analysis) -> str:
         f"Guarantee (annual base >= {GUARANTEE_MULTIPLE}x ${AUDIT_PRICE_USD:,}): "
         + ("MET" if a.guarantee_met else "NOT MET"),
     ]
+    if a.eval_comparison:
+        ev = a.eval_comparison
+        lines.append(
+            f"Eval gate: {ev.baseline.rate:.0%} -> {ev.candidate.rate:.0%} "
+            f"({'+' if ev.delta >= 0 else ''}{ev.delta:.0%}, {'PASS' if ev.gate_pass else 'FAIL'})"
+        )
     if a.warnings:
         lines += ["", "Warnings:", *(f"- {w}" for w in a.warnings)]
     return "\n".join(lines)

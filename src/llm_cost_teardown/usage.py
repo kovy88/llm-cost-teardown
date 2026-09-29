@@ -361,7 +361,10 @@ def load_usage(paths: Path | Iterable[Path]) -> UsageData:
     for path in map(Path, paths):
         name = path.name
         if path.suffix == ".jsonl":
-            rows += _request_rows(_read_jsonl(path), name, warnings, salt)
+            lines = list(_read_jsonl(path))
+            if lines and ("checks" in lines[0] or ("output" in lines[0] and "usage" not in lines[0])):
+                continue
+            rows += _request_rows(lines, name, warnings, salt)
         elif path.suffix == ".csv":
             csv_frames.append(_load_normalised_csv(path))
         else:

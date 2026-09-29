@@ -18,7 +18,21 @@ def _analyze(args: argparse.Namespace) -> int:
         )
         return 2
     batchable = [w.strip() for w in args.batchable.split(",") if w.strip()] if args.batchable else []
-    result = analyze(args.files, client=args.client, batchable=batchable)
+    eval_comparison = None
+    eval_flags = (args.eval_set, args.eval_baseline, args.eval_candidate)
+    if any(eval_flags) and not all(eval_flags):
+        print(
+            "--eval-set, --eval-baseline and --eval-candidate must be passed together.",
+            file=sys.stderr,
+        )
+        return 2
+    if all(eval_flags):
+        from llm_cost_teardown.evals import compare_paths
+
+        eval_comparison = compare_paths(
+            args.eval_set, args.eval_baseline, args.eval_candidate, tolerance=args.eval_tolerance
+        )
+    result = analyze(args.files, client=args.client, batchable=batchable, eval_comparison=eval_comparison)
     print(summary_text(result))
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -59,6 +73,38 @@ def _fingerprint(args: argparse.Namespace) -> int:
     return 0
 
 
+def _eval(args: argparse.Namespace) -> int:
+    from llm_cost_teardown.evals import compare_paths, rate_label, score_paths
+    from llm_cost_teardown.report import render_eval_report, table
+
+    if args.candidate:
+        comparison = compare_paths(args.eval_set, args.results, args.candidate, tolerance=args.tolerance)
+        print(
+            f"Eval gate: {rate_label(comparison.baseline)} -> {rate_label(comparison.candidate)} "
+            f"({'+' if comparison.delta >= 0 else ''}{comparison.delta:.0%}, "
+            f"{'PASS' if comparison.gate_pass else 'FAIL'})"
+        )
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(render_eval_report(comparison))
+            print(f"Report written to {args.report}")
+        return 0 if comparison.gate_pass else 1
+    score = score_paths(args.eval_set, args.results)
+    print(f"Pass rate: {rate_label(score)}")
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        rows = [
+            [f"`{w}`", f"{passed}/{n}", f"{passed / n:.0%}"] for w, (passed, n) in sorted(score.by_workload.items())
+        ]
+        args.report.write_text(
+            "# Eval score\n\n"
+            + table(["Workload", "Passed", "Rate"], rows, "lrr")
+            + f"\n\nOverall: {rate_label(score)}\n"
+        )
+        print(f"Report written to {args.report}")
+    return 0
+
+
 def _samples(args: argparse.Namespace) -> int:
     from llm_cost_teardown.samples import write_samples
 
@@ -79,6 +125,10 @@ def main() -> None:
     a.add_argument("--json", type=Path, help="Write a machine-readable summary here")
     a.add_argument("--internal", action="store_true", help="Include the guarantee check in the report")
     a.add_argument("--allow-stale-prices", action="store_true")
+    a.add_argument("--eval-set", type=Path, help="Eval JSONL (id, workload, input, checks)")
+    a.add_argument("--eval-baseline", type=Path, help="Baseline model outputs JSONL")
+    a.add_argument("--eval-candidate", type=Path, help="Candidate model outputs JSONL")
+    a.add_argument("--eval-tolerance", type=float, default=0.02, help="Max allowed drop in pass rate")
     a.set_defaults(func=_analyze)
 
     f = sub.add_parser("fetch", help="Export 30 days of usage + costs via the vendor Admin API")
@@ -91,6 +141,14 @@ def main() -> None:
     fp.add_argument("inputs", nargs="+", type=Path, help="All logs in one run: hashes only match within a run")
     fp.add_argument("-o", "--output", type=Path, required=True)
     fp.set_defaults(func=_fingerprint)
+
+    e = sub.add_parser("eval", help="Score model outputs against an eval set; compare baseline vs candidate")
+    e.add_argument("eval_set", type=Path, help="Eval JSONL with id, input and checks")
+    e.add_argument("results", type=Path, help="JSONL with id, model, output (baseline if --candidate is set)")
+    e.add_argument("--candidate", type=Path, help="Candidate outputs; compare against results as baseline")
+    e.add_argument("--tolerance", type=float, default=0.02)
+    e.add_argument("--report", type=Path)
+    e.set_defaults(func=_eval)
 
     s = sub.add_parser("samples", help="Regenerate the synthetic sample exports")
     s.add_argument("--out", type=Path, default=Path("data/samples"))

@@ -14,6 +14,8 @@
    - the basis for each lever: exact, measured or scenario.
 3. If the saving is not worth acting on, the report says so, and we stop there.
 
+Send the export to **koval.matej88@seznam.cz**. NDA: [nda.md](nda.md).
+
 ## The audit (about 2 weeks)
 
 | Deliverable | What it is |
