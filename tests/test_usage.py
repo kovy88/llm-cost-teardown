@@ -176,6 +176,63 @@ def test_embeddings_are_priced_and_do_not_change_chat_levers(tmp):
     assert "text-embedding-3-small" in report_models
 
 
+def test_messy_export_unknown_model_embeddings_and_costs(tmp):
+    from llm_cost_teardown.analyzer import analyze
+    from llm_cost_teardown.report import render_markdown
+
+    chat = write_json(tmp / "chat.json", openai_page([openai_result(input_tokens=1_000_000, output_tokens=1_000)]))
+    messy_usage = write_json(
+        tmp / "messy.json",
+        openai_page(
+            [
+                openai_result(input_tokens=1_000_000, output_tokens=1_000),
+                openai_result(model="my-finetune", input_tokens=50_000, output_tokens=500, project_id="proj_ft"),
+            ]
+        ),
+    )
+    embed = write_json(
+        tmp / "embed.json",
+        openai_page(
+            [
+                {
+                    "object": "organization.usage.embeddings.result",
+                    "input_tokens": 50_000_000,
+                    "num_model_requests": 1_000,
+                    "model": "text-embedding-3-small",
+                    "project_id": "proj_rag",
+                }
+            ]
+        ),
+    )
+    costs = write_json(
+        tmp / "costs.json",
+        {
+            "object": "page",
+            "data": [
+                {
+                    "object": "bucket",
+                    "start_time": 1_788_000_000,
+                    "end_time": 1_788_086_400,
+                    "results": [{"object": "organization.costs.result", "amount": {"value": 99.0, "currency": "usd"}}],
+                }
+            ],
+        },
+    )
+    chat_only = analyze([chat])
+    messy = analyze([messy_usage, embed, costs])
+
+    def cache_base(result):
+        return next(lever for lever in result.levers if lever.key == "caching").base
+
+    assert cache_base(messy) == pytest.approx(cache_base(chat_only))
+    assert any("my-finetune" in w for w in messy.warnings)
+    assert messy.reconciliation is not None
+    row = messy.reconciliation.iloc[0]
+    assert row["modelled"] != pytest.approx(row["invoiced"])
+    report = render_markdown(messy)
+    assert "Monthly spend" in report or "spend" in report.lower()
+
+
 def test_detect_kind():
     assert detect_kind([openai_page([openai_result()])]) == "openai_usage"
     assert detect_kind([anthropic_page([anthropic_result()])]) == "anthropic_usage"

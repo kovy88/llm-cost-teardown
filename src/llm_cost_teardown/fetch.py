@@ -7,9 +7,12 @@ and the Anthropic Usage & Cost Admin API reference.
 import json
 import os
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import UTC, datetime, timedelta
+
+EMPTY_PAGE = {"data": [], "has_more": False, "next_page": None}
 
 USER_AGENT = "llm-cost-teardown/0.1 (read-only usage export)"
 HOUR_BUCKETS_PER_PAGE = 168
@@ -52,13 +55,18 @@ def fetch_openai(days: int = 30, api_key: str | None = None) -> dict[str, list[d
         + [("group_by[]", g) for g in ("model", "project_id", "batch", "service_tier")],
         headers,
     )
-    embeddings = _paginate(
-        f"{base}/usage/embeddings",
-        window
-        + [("bucket_width", "1h"), ("limit", str(HOUR_BUCKETS_PER_PAGE))]
-        + [("group_by[]", g) for g in ("model", "project_id")],
-        headers,
-    )
+    # Some orgs return 403/404 on embeddings; still export completions and costs.
+    try:
+        embeddings = _paginate(
+            f"{base}/usage/embeddings",
+            window
+            + [("bucket_width", "1h"), ("limit", str(HOUR_BUCKETS_PER_PAGE))]
+            + [("group_by[]", g) for g in ("model", "project_id")],
+            headers,
+        )
+    except urllib.error.HTTPError as err:
+        print(f"warning: OpenAI embeddings usage export failed with HTTP {err.code}; writing empty page")
+        embeddings = [dict(EMPTY_PAGE)]
     costs = _paginate(
         f"{base}/costs",
         window + [("bucket_width", "1d"), ("limit", "180")] + [("group_by[]", g) for g in ("line_item", "project_id")],

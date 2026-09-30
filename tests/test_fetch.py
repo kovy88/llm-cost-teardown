@@ -1,10 +1,16 @@
 import io
 import json
+import urllib.error
 import urllib.parse
 
 import pytest
 
 from llm_cost_teardown import fetch
+
+
+def _ok_page(query: dict) -> dict:
+    more = "page" not in query
+    return {"data": [], "has_more": more, "next_page": "cursor-2" if more else None}
 
 
 @pytest.fixture
@@ -15,9 +21,7 @@ def calls(monkeypatch):
         url = urllib.parse.urlsplit(req.full_url)
         query = urllib.parse.parse_qs(url.query)
         seen.append((url.path, query, dict(req.header_items())))
-        more = "page" not in query
-        body = {"data": [], "has_more": more, "next_page": "cursor-2" if more else None}
-        return io.BytesIO(json.dumps(body).encode())
+        return io.BytesIO(json.dumps(_ok_page(query)).encode())
 
     monkeypatch.setattr(fetch.urllib.request, "urlopen", fake_urlopen)
     monkeypatch.setattr(fetch.time, "sleep", lambda s: None)
@@ -39,6 +43,26 @@ def test_openai_fetch_paginates_with_admin_key(calls, monkeypatch):
     assert calls[2][1]["group_by[]"] == ["model", "project_id"]
     assert "batch" not in calls[2][1]
     assert calls[4][0] == "/v1/organization/costs"
+
+
+def test_openai_fetch_survives_embeddings_http_error(monkeypatch, capsys):
+    monkeypatch.setenv("OPENAI_ADMIN_KEY", "sk-admin-test")
+    monkeypatch.setattr(fetch.time, "sleep", lambda s: None)
+
+    def fake_urlopen(req, timeout):
+        url = urllib.parse.urlsplit(req.full_url)
+        if url.path.endswith("/usage/embeddings"):
+            raise urllib.error.HTTPError(req.full_url, 403, "Forbidden", hdrs=None, fp=None)
+        query = urllib.parse.parse_qs(url.query)
+        return io.BytesIO(json.dumps(_ok_page(query)).encode())
+
+    monkeypatch.setattr(fetch.urllib.request, "urlopen", fake_urlopen)
+    exports = fetch.fetch_openai(days=30)
+    assert set(exports) == {"openai_usage.json", "openai_embeddings.json", "openai_costs.json"}
+    assert len(exports["openai_usage.json"]) == 2
+    assert len(exports["openai_costs.json"]) == 2
+    assert exports["openai_embeddings.json"] == [{"data": [], "has_more": False, "next_page": None}]
+    assert "embeddings" in capsys.readouterr().out.lower()
 
 
 def test_anthropic_fetch_uses_admin_headers(calls, monkeypatch):
