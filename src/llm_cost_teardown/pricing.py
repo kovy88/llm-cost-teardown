@@ -63,6 +63,21 @@ class ModelPrice:
     notes: str = ""
 
 
+def _embedding(inp: float) -> ModelPrice:
+    """Input-only embedding price. Model cards read 2026-09-30 show the Batch API price equal to standard."""
+    return ModelPrice(
+        "openai",
+        inp,
+        inp,
+        inp,
+        0.0,
+        tokenizer="openai",
+        batch_multiplier=1.0,
+        min_cacheable_tokens=10**12,
+        notes="Input only. No batch discount: the model card lists the same Batch API price.",
+    )
+
+
 def _openai_legacy(inp: float, cached: float, out: float, **kw) -> ModelPrice:
     """OpenAI models before GPT-5.6: no cache-write surcharge."""
     return ModelPrice("openai", inp, cached, inp, out, tokenizer="openai", **kw)
@@ -166,6 +181,10 @@ PRICES: dict[str, ModelPrice] = {
     "claude-haiku-3-5": _claude(
         0.80, 0.08, 4.00, min_cache=2048, tokenizer="claude-legacy", successor="claude-haiku-4-5", notes="Retired"
     ),
+    # --- OpenAI embeddings (model cards, 2026-09-30). Input only. ---
+    "text-embedding-3-small": _embedding(0.02),
+    "text-embedding-3-large": _embedding(0.13),
+    "text-embedding-ada-002": _embedding(0.10),
 }
 
 ALIASES = {

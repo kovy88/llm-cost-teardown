@@ -146,6 +146,24 @@ def compare_paths(
     )
 
 
+def init_eval_set(paths: Path | list[Path], dest: Path, cap: int = 100) -> list[dict]:
+    """One empty case per workload, dearest first, at most `cap` cases.
+
+    The client fills `input` and `checks`. Empty checks are not a score.
+    """
+    from llm_cost_teardown.usage import load_usage
+
+    frame = load_usage(paths).frame
+    costs = frame.groupby("workload")["cost_usd"].sum().sort_values(ascending=False)
+    names = [str(name) for name in costs.index if name and str(name) not in ("all", "nan")][:cap]
+    if not names:
+        names = ["all"]
+    rows = [{"id": f"{name}_{i:03d}", "workload": name, "input": "", "checks": []} for i, name in enumerate(names, 1)]
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    return rows
+
+
 def _rate(score: EvalScore) -> str:
     return f"{score.rate:.0%} ({score.passed}/{score.n})"
 

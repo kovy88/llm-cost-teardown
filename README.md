@@ -94,7 +94,7 @@ Levers are stacked multiplicatively, so overlapping savings are never counted tw
 - When you include the cost export, the report puts modelled cost next to invoiced cost, so any pricing gap is visible before a single saving is claimed.
 - Known limits:
   - List prices only, so negotiated discounts and credits show up as a reconciliation gap.
-  - Only chat/messages usage is priced. Embeddings, images and audio are skipped with a warning.
+  - OpenAI embeddings are priced (input only). Images and audio are skipped with a warning.
   - Long-context surcharges are only visible in request logs.
 
 ## The audit

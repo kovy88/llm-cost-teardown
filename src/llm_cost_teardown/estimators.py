@@ -582,9 +582,20 @@ LEVERS = [lever_migration, lever_routing, lever_caching, lever_batch, lever_outp
 def run_levers(ctx: Context) -> list[Lever]:
     from llm_cost_teardown.fixes import apply_fixes
 
-    levers = [fn(ctx) for fn in LEVERS]
-    apply_fixes(ctx, levers)
+    chat = _without_embeddings(ctx)
+    levers = [fn(chat) for fn in LEVERS]
+    apply_fixes(chat, levers)
     return levers
+
+
+def _without_embeddings(ctx: Context) -> Context:
+    return Context(spend=_drop_embeddings(ctx.spend), requests=_drop_embeddings(ctx.requests), batchable=ctx.batchable)
+
+
+def _drop_embeddings(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty or "product" not in df.columns:
+        return df
+    return df[df["product"] != "embedding"]
 
 
 def combine(levers: list[Lever], monthly_spend: float) -> dict[str, float]:

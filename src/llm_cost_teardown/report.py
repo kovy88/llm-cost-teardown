@@ -126,6 +126,25 @@ def _eval_section(c: Comparison) -> list[str]:
     return lines
 
 
+def _embedding_note(a: Analysis) -> list[str]:
+    spend = a.spend
+    if "product" not in spend.columns:
+        return []
+    embed = spend[spend["product"] == "embedding"]
+    if embed.empty:
+        return []
+    bits = []
+    for model, frame in embed.groupby("model_key"):
+        cost = float((frame["cost_usd"] * frame["monthly_factor"]).sum())
+        bits.append(f"`{model}` {money(cost)}/month")
+    return [
+        "",
+        "Embeddings are in the table above and in the invoice check. Cache, migration and routing do not apply. "
+        "The model cards read on 2026-09-30 list the Batch API price equal to the standard price, and the usage "
+        "export has no batch flag, so no batch saving is claimed: " + "; ".join(bits) + ".",
+    ]
+
+
 def render_markdown(a: Analysis, internal: bool = False) -> str:
     start, end, days = a.period
     c = a.combined
@@ -210,6 +229,7 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
             "llrrrrrr",
         )
     )
+    out += _embedding_note(a)
     out += ["", "### By workload (project / workspace / feature)", ""]
     out.append(
         table(
@@ -268,8 +288,8 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
         )
         out += [
             "",
-            "Differences come from negotiated discounts, credits, long-context surcharges on aggregate data "
-            "and usage types outside chat/messages (embeddings, images, audio).",
+            "Differences come from negotiated discounts, credits, long-context surcharges on aggregate data, "
+            "and from images and audio, which are not priced. Embeddings are included when that export is present.",
             "",
         ]
 

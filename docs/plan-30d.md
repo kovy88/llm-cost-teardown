@@ -15,7 +15,7 @@
   - 7 savings levers;
   - Markdown/JSON report;
   - `fetch` and `fingerprint` commands;
-  - 112 tests, including schema checks against the official SDK types.
+  - 118 tests, including schema checks against the official SDK types.
 - [x] Synthetic sample company and [sample report](sample-report.md).
 - [x] Client guide: [send-your-data.md](send-your-data.md). Field mapping: [data-formats.md](data-formats.md).
 - [x] Dry-run path: `fetch` + `analyze` + `eval` on synthetic data; still do one pass on your own real account.

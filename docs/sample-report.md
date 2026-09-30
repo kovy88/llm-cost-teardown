@@ -278,7 +278,7 @@ def once(cache: dict, key: str, create, **params):
 | anthropic | 30 | $10,821 | $10,796 | -0.2% |
 | openai | 30 | $8,346 | $8,318 | -0.3% |
 
-Differences come from negotiated discounts, credits, long-context surcharges on aggregate data and usage types outside chat/messages (embeddings, images, audio).
+Differences come from negotiated discounts, credits, long-context surcharges on aggregate data, and from images and audio, which are not priced. Embeddings are included when that export is present.
 
 ## Quality gate (eval set)
 

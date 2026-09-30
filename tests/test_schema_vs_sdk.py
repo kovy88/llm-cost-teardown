@@ -11,6 +11,7 @@ from openai.types.admin.organization.usage_completions_response import (
     UsageCompletionsResponse,
 )
 from openai.types.admin.organization.usage_costs_response import UsageCostsResponse
+from openai.types.admin.organization.usage_embeddings_response import DataResultOrganizationUsageEmbeddingsResult
 from openai.types.completion_usage import CompletionTokensDetails, CompletionUsage, PromptTokensDetails
 from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails, ResponseUsage
 
@@ -35,6 +36,13 @@ OPENAI_USAGE_FIELDS = {
 
 def test_openai_usage_result_fields_exist():
     assert OPENAI_USAGE_FIELDS <= set(DataResultOrganizationUsageCompletionsResult.model_fields)
+
+
+def test_openai_embedding_result_fields_exist():
+    assert {"input_tokens", "num_model_requests", "model", "project_id", "api_key_id", "user_id"} <= set(
+        DataResultOrganizationUsageEmbeddingsResult.model_fields
+    )
+    assert "batch" not in DataResultOrganizationUsageEmbeddingsResult.model_fields
 
 
 def test_openai_cost_result_fields_exist():

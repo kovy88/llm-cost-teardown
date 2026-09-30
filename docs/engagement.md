@@ -29,7 +29,7 @@ uv run llm-cost-teardown analyze data/private/*.json \
 2. NDA signed if not already.
 3. Request logs: they fingerprint on their machine (`llm-cost-teardown fingerprint`). You never need raw prompts.
 4. Re-run analyze with logs. Scenario rows should become **measured**.
-5. Build the eval set with them ([eval.md](eval.md)): 100 queries from real traffic, rubric they accept. Freeze it before changing models.
+5. Build the eval set with them ([eval.md](eval.md)). `eval-init` writes one empty case per workload. Freeze the rubric before changing models.
 6. Run baseline (current models) and candidate (migrations / routing / shorter output). Gate: candidate pass rate within 2 pp of baseline, no unexplained regressions.
 7. For each lever with a real saving: a concrete code change (cache breakpoint, `cache_control` / `prompt_cache_key`, batch job, router rule, `max_tokens`).
 8. 2-hour session: walk the report, agree rollout order, leave the eval command they can re-run.

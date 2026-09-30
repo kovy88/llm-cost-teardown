@@ -91,3 +91,17 @@ def test_cli_eval_gate(tmp_path: Path):
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert "PASS" in result.stdout
+
+
+def test_eval_init_one_row_per_workload(tmp_path: Path):
+    from llm_cost_teardown.evals import init_eval_set
+
+    write_samples(tmp_path)
+    out = tmp_path / "skel.jsonl"
+    sources = [tmp_path / "openai_usage.json", tmp_path / "anthropic_usage.json"]
+    rows = init_eval_set(sources, out, cap=2)
+    assert len(rows) == 2
+    assert all(row["checks"] == [] and row["input"] == "" for row in rows)
+    assert len({row["workload"] for row in rows}) == 2
+    full = init_eval_set(sources, out)
+    assert 2 < len(full) <= 100

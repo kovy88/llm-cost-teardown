@@ -27,7 +27,7 @@ def calls(monkeypatch):
 def test_openai_fetch_paginates_with_admin_key(calls, monkeypatch):
     monkeypatch.setenv("OPENAI_ADMIN_KEY", "sk-admin-test")
     exports = fetch.fetch_openai(days=30)
-    assert set(exports) == {"openai_usage.json", "openai_costs.json"}
+    assert set(exports) == {"openai_usage.json", "openai_embeddings.json", "openai_costs.json"}
     assert all(len(pages) == 2 for pages in exports.values())
     path, query, headers = calls[0]
     assert path == "/v1/organization/usage/completions"
@@ -35,7 +35,10 @@ def test_openai_fetch_paginates_with_admin_key(calls, monkeypatch):
     assert query["bucket_width"] == ["1h"]
     assert headers["Authorization"] == "Bearer sk-admin-test"
     assert calls[1][1]["page"] == ["cursor-2"]
-    assert calls[2][0] == "/v1/organization/costs"
+    assert calls[2][0] == "/v1/organization/usage/embeddings"
+    assert calls[2][1]["group_by[]"] == ["model", "project_id"]
+    assert "batch" not in calls[2][1]
+    assert calls[4][0] == "/v1/organization/costs"
 
 
 def test_anthropic_fetch_uses_admin_headers(calls, monkeypatch):

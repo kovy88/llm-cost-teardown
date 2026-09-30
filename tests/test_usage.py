@@ -130,10 +130,60 @@ def test_cost_exports_are_parsed_into_usd(tmp):
     assert by_vendor["anthropic"] == pytest.approx(123.4567)
 
 
+def test_embeddings_are_priced_and_do_not_change_chat_levers(tmp):
+    from llm_cost_teardown.analyzer import analyze
+
+    chat = write_json(tmp / "chat.json", openai_page([openai_result(input_tokens=1_000_000, output_tokens=1_000)]))
+    embed = write_json(
+        tmp / "embed.json",
+        openai_page(
+            [
+                {
+                    "object": "organization.usage.embeddings.result",
+                    "input_tokens": 50_000_000,
+                    "num_model_requests": 1_000,
+                    "model": "text-embedding-3-small",
+                    "project_id": "proj_rag",
+                }
+            ]
+        ),
+    )
+    costs = write_json(
+        tmp / "costs.json",
+        {
+            "object": "page",
+            "data": [
+                {
+                    "object": "bucket",
+                    "start_time": 1_788_000_000,
+                    "end_time": 1_788_086_400,
+                    "results": [{"object": "organization.costs.result", "amount": {"value": 3.5, "currency": "usd"}}],
+                }
+            ],
+        },
+    )
+    chat_only = analyze([chat])
+    both = analyze([chat, embed, costs])
+    # 50M tokens * $0.02 / 1M = $1 for the day, normalised to 30 days.
+    assert both.monthly_spend == pytest.approx(chat_only.monthly_spend + 30)
+
+    def cache_base(result):
+        return next(lever for lever in result.levers if lever.key == "caching").base
+
+    assert cache_base(both) == pytest.approx(cache_base(chat_only))
+    assert both.reconciliation.iloc[0]["modelled"] == pytest.approx(both.spend["cost_usd"].sum())
+    report_models = set(both.by_model["model_key"])
+    assert "text-embedding-3-small" in report_models
+
+
 def test_detect_kind():
     assert detect_kind([openai_page([openai_result()])]) == "openai_usage"
     assert detect_kind([anthropic_page([anthropic_result()])]) == "anthropic_usage"
     assert detect_kind([{"data": []}]) == "empty"
+    embedding = openai_page(
+        [{"object": "organization.usage.embeddings.result", "input_tokens": 1, "model": "text-embedding-3-small"}]
+    )
+    assert detect_kind([embedding]) == "openai_embeddings"
 
 
 def test_request_log_sample_weight_and_long_context(tmp):

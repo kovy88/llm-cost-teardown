@@ -108,6 +108,14 @@ def _eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def _eval_init(args: argparse.Namespace) -> int:
+    from llm_cost_teardown.evals import init_eval_set
+
+    rows = init_eval_set(args.files, args.output)
+    print(f"{len(rows)} skeleton cases written to {args.output} (fill input and checks before scoring)")
+    return 0
+
+
 def _samples(args: argparse.Namespace) -> int:
     from llm_cost_teardown.samples import write_samples
 
@@ -153,6 +161,11 @@ def main() -> None:
     e.add_argument("--tolerance", type=float, default=0.02)
     e.add_argument("--report", type=Path)
     e.set_defaults(func=_eval)
+
+    init = sub.add_parser("eval-init", help="Write an empty eval JSONL, one case per workload (max 100)")
+    init.add_argument("files", nargs="+", type=Path, help="Usage exports to read workload names from")
+    init.add_argument("-o", "--output", type=Path, required=True)
+    init.set_defaults(func=_eval_init)
 
     s = sub.add_parser("samples", help="Regenerate the synthetic sample exports")
     s.add_argument("--out", type=Path, default=Path("data/samples"))

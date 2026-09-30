@@ -38,6 +38,7 @@ COLUMNS = [
     "model",
     "model_key",
     "workload",
+    "product",
     "service_tier",
     "inference_geo",
     "requests",
@@ -103,6 +104,7 @@ def _row(**kw) -> dict:
         bucket_seconds=0,
         service_tier="standard",
         workload="all",
+        product="chat",
     )
     row.update(kw)
     return row
@@ -145,6 +147,32 @@ def _openai_usage_rows(pages: list[dict], source: str, warnings: list[str]) -> l
                 )
     for obj, n in skipped.items():
         warnings.append(f"{source}: skipped {n} non-completions results ({obj}); not priced.")
+    return rows
+
+
+def _openai_embedding_rows(pages: list[dict], source: str) -> list[dict]:
+    """Embeddings usage. Fields match DataResultOrganizationUsageEmbeddingsResult."""
+    rows = []
+    for page in pages:
+        for bucket in page.get("data", []):
+            start, end = bucket["start_time"], bucket["end_time"]
+            for result in bucket.get("results", []):
+                if result.get("object") != "organization.usage.embeddings.result":
+                    continue
+                rows.append(
+                    _row(
+                        timestamp=_ts(start),
+                        bucket_seconds=end - start,
+                        granularity="bucket",
+                        vendor="openai",
+                        model=result.get("model") or "unknown",
+                        workload=result.get("project_id") or result.get("api_key_id") or result.get("user_id") or "all",
+                        product="embedding",
+                        requests=_int(result.get("num_model_requests")),
+                        uncached_input_tokens=_int(result.get("input_tokens")),
+                        source=source,
+                    )
+                )
     return rows
 
 
@@ -338,6 +366,8 @@ def detect_kind(pages: list[dict]) -> str:
     obj = r.get("object", "")
     if obj == "organization.costs.result":
         return "openai_costs"
+    if obj == "organization.usage.embeddings.result":
+        return "openai_embeddings"
     if obj.startswith("organization.usage."):
         return "openai_usage"
     if "uncached_input_tokens" in r:
@@ -372,6 +402,8 @@ def load_usage(paths: Path | Iterable[Path]) -> UsageData:
             kind = detect_kind(pages)
             if kind == "openai_usage":
                 rows += _openai_usage_rows(pages, name, warnings)
+            elif kind == "openai_embeddings":
+                rows += _openai_embedding_rows(pages, name)
             elif kind == "anthropic_usage":
                 rows += _anthropic_usage_rows(pages, name, warnings)
             elif kind == "openai_costs":

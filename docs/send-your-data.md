@@ -18,9 +18,10 @@ OPENAI_ADMIN_KEY=sk-admin-... uv run llm-cost-teardown fetch openai --days 30
 ANTHROPIC_ADMIN_KEY=sk-ant-admin-... uv run llm-cost-teardown fetch anthropic --days 30
 ```
 
-This writes four JSON files into `data/private/`:
+This writes JSON files into `data/private/`:
 
 - `openai_usage.json`
+- `openai_embeddings.json`
 - `openai_costs.json`
 - `anthropic_usage.json`
 - `anthropic_costs.json`
@@ -32,6 +33,7 @@ Open them if you like. They contain token counts, model names, project/workspace
 | Vendor | Endpoint | Grouped by |
 | :--- | :--- | :--- |
 | OpenAI | `/v1/organization/usage/completions` (hourly) | model, project, batch, service tier |
+| OpenAI | `/v1/organization/usage/embeddings` (hourly) | model, project |
 | OpenAI | `/v1/organization/costs` (daily) | line item, project |
 | Anthropic | `/v1/organizations/usage_report/messages` (hourly) | model, workspace, API key, service tier, context window, inference geo |
 | Anthropic | `/v1/organizations/cost_report` (daily) | workspace, description |

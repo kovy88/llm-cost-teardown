@@ -43,7 +43,13 @@ uv run llm-cost-teardown analyze data/samples/*.json data/samples/requests.jsonl
 
 ## How to build it from a client
 
-1. Sample ~150 real user inputs across the expensive workloads (not the prompts' system text; the user turn is enough).
+Start from the workloads already in the export. This writes one empty case per workload, dearest first, at most 100. Fill `input` and `checks` with the client before anyone scores it.
+
+```bash
+uv run llm-cost-teardown eval-init data/private/*.json -o data/private/eval_set.jsonl
+```
+
+1. Sample real user inputs across the expensive workloads (not the prompts' system text; the user turn is enough).
 2. Sit with the owner of each feature and write the rubric: exact label, required facts, or JSON field. Drop anything they cannot score in 10 seconds.
 3. Freeze 100 items. Run the **current** models once → baseline. Do not touch the set after that.
 4. Run the candidate (new model, router, shorter `max_tokens`) → compare.

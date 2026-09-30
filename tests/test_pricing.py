@@ -36,13 +36,18 @@ def test_verified_on_is_set_and_fresh_rule():
 def test_price_table_is_consistent(key):
     p = pricing.PRICES[key]
     assert p.vendor in ("openai", "anthropic")
-    assert 0 < p.cached_input < p.input < p.output
-    assert p.cache_write >= p.input
     assert p.tokenizer in pricing.TOKENIZER_SCALE
     for ref in (p.successor, p.cheaper_tier):
         assert ref is None or ref in pricing.PRICES
     if p.successor:
         assert pricing.PRICES[p.successor].vendor == p.vendor
+    if p.output == 0:
+        assert p.input > 0
+        assert p.cached_input == p.input
+        assert p.batch_multiplier == 1.0
+        return
+    assert 0 < p.cached_input < p.input < p.output
+    assert p.cache_write >= p.input
 
 
 def test_successor_chains_terminate():
@@ -64,3 +69,6 @@ def test_spot_prices_from_vendor_pages():
     assert pricing.PRICES["gpt-6.1-sol"].cache_write == 2.50
     assert pricing.PRICES["gpt-4o"].cache_write == pricing.PRICES["gpt-4o"].input
     assert pricing.PRICES["claude-haiku-4-5"].min_cacheable_tokens == 4096
+    assert pricing.PRICES["text-embedding-3-small"].input == 0.02
+    assert pricing.PRICES["text-embedding-3-large"].input == 0.13
+    assert pricing.PRICES["text-embedding-ada-002"].input == 0.10

@@ -52,12 +52,19 @@ def fetch_openai(days: int = 30, api_key: str | None = None) -> dict[str, list[d
         + [("group_by[]", g) for g in ("model", "project_id", "batch", "service_tier")],
         headers,
     )
+    embeddings = _paginate(
+        f"{base}/usage/embeddings",
+        window
+        + [("bucket_width", "1h"), ("limit", str(HOUR_BUCKETS_PER_PAGE))]
+        + [("group_by[]", g) for g in ("model", "project_id")],
+        headers,
+    )
     costs = _paginate(
         f"{base}/costs",
         window + [("bucket_width", "1d"), ("limit", "180")] + [("group_by[]", g) for g in ("line_item", "project_id")],
         headers,
     )
-    return {"openai_usage.json": usage, "openai_costs.json": costs}
+    return {"openai_usage.json": usage, "openai_embeddings.json": embeddings, "openai_costs.json": costs}
 
 
 def fetch_anthropic(days: int = 30, api_key: str | None = None) -> dict[str, list[dict]]:

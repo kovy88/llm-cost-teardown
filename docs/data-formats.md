@@ -42,9 +42,23 @@ The input total is always `uncached + cache_read + cache_write + cache_write_1h`
 | `batch` | `service_tier = batch` | Requires `group_by[]=batch` |
 | `service_tier` | `service_tier` | `default` / `auto` map to `standard`. `priority` maps to `fast`: OpenAI returns `priority` for Fast-mode requests (per `ChatCompletion.service_tier` docstring) |
 
-Other result objects on the same page (embeddings, images, audio…) are skipped with a warning.
+Other result objects on the same completions page (images, audio, embeddings) are skipped with a warning. Embeddings have their own export, below.
 
 The query string uses bracket arrays (`group_by[]=model`), matching the SDK's `array_format="brackets"`.
+
+## OpenAI Usage API: embeddings
+
+`GET /v1/organization/usage/embeddings`. The type is `UsageEmbeddingsResponse`, and its results have `object = "organization.usage.embeddings.result"`. `fetch` writes `openai_embeddings.json`.
+
+| Field | Column | Note |
+| :--- | :--- | :--- |
+| `start_time`, `end_time` | `timestamp`, `bucket_seconds` | `bucket_width=1h`, `limit=168` |
+| `input_tokens` | `uncached_input_tokens` | Input only. No cache fields on this result |
+| `num_model_requests` | `requests` | |
+| `model` | `model` | Priced for `text-embedding-3-small` ($0.02), `text-embedding-3-large` ($0.13), `text-embedding-ada-002` ($0.10) per 1M, read from the model cards on 2026-09-30 |
+| `project_id` | `workload` | `group_by[]` is `model` and `project_id`. The SDK type has no `batch` field |
+
+Chat levers (cache, migration, routing, output trim) do not run on these rows. The model cards list the Batch API price equal to the standard price, so no batch saving is claimed.
 
 ## OpenAI Costs API
 
