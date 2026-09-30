@@ -251,6 +251,9 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
             out += [lever_table, ""]
         if lv.actions and lv.base > 0:
             out += ["What to change:", ""] + [f"- {x}" for x in lv.actions] + [""]
+        if lv.base > 0:
+            for snippet in lv.snippets:
+                out += ["```python", snippet, "```", ""]
 
     if a.reconciliation is not None and not a.reconciliation.empty:
         out += ["## Check against the invoice", ""]
@@ -305,6 +308,55 @@ def render_markdown(a: Analysis, internal: bool = False) -> str:
     return "\n".join(out)
 
 
+def render_client_email(a: Analysis) -> str:
+    """Three-line reply to send with the report. Copy it; do not attach this as the report."""
+    who = a.client or "there"
+    ranked = sorted((lv for lv in a.levers if lv.base > 0), key=lambda lv: -lv.base)
+    annual = a.annual["base"]
+    threshold = GUARANTEE_MULTIPLE * AUDIT_PRICE_USD
+    lines = [f"Hi {who},", "", "Estimate attached."]
+    if not ranked:
+        lines += [
+            "",
+            "I did not find a saving large enough to act on. I would stop here.",
+            "",
+            "Matěj",
+            CONTACT_EMAIL,
+        ]
+        return "\n".join(lines)
+    top = ranked[0]
+    scenario = [lv.title for lv in a.levers if "scenario" in lv.method and lv.base > 0]
+    share = pct(a.combined["base"] / a.monthly_spend) if a.monthly_spend else "—"
+    lines += [
+        "",
+        f"- Top lever: {top.title} — {money(top.base)}/month ({top.method}).",
+        f"- Annual base saving: {money(annual)} ({share} of spend). Conservative annual: {money(a.annual['low'])}.",
+    ]
+    if scenario:
+        lines.append(f"- Still a scenario until we have logs: {scenario[0]}.")
+    else:
+        lines.append("- The large rows are already exact or measured on this export.")
+    lines.append("")
+    if a.annual["low"] >= threshold:
+        lines.append(
+            f"The ${AUDIT_PRICE_USD:,} audit clears its own guarantee on the conservative number "
+            f"(${threshold:,.0f}/year). Happy to walk through it for 20 minutes."
+        )
+    elif annual >= threshold:
+        lines.append(
+            f"Base annual saving is above ${threshold:,.0f}, but the conservative number is not. "
+            f"I would only take the ${AUDIT_PRICE_USD:,} audit if you want the scenario rows measured. "
+            "Otherwise this estimate is the deliverable."
+        )
+    else:
+        lines.append(
+            f"Annual base saving is under ${threshold:,.0f}, so I would not sell the ${AUDIT_PRICE_USD:,} audit. "
+            "The report and the open-source tool are the useful part."
+        )
+    lines += ["", "Matěj", CONTACT_EMAIL]
+    return "\n".join(lines)
+
+
 def render_eval_report(c: Comparison) -> str:
     body = _eval_section(c)
     body[0] = "# Eval comparison"
@@ -335,6 +387,7 @@ def to_json(a: Analysis) -> str:
                 "high": lv.high,
                 "method": lv.method,
                 "evidence": lv.evidence,
+                "snippets": lv.snippets,
             }
             for lv in a.levers
         ],

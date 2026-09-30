@@ -8,7 +8,7 @@ from llm_cost_teardown import pricing
 
 def _analyze(args: argparse.Namespace) -> int:
     from llm_cost_teardown.analyzer import analyze, summary_text
-    from llm_cost_teardown.report import render_markdown, to_json
+    from llm_cost_teardown.report import render_client_email, render_markdown, to_json
 
     if (args.report or args.json) and pricing.is_stale() and not args.allow_stale_prices:
         print(
@@ -42,6 +42,9 @@ def _analyze(args: argparse.Namespace) -> int:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(to_json(result))
         print(f"Summary JSON written to {args.json}")
+    if args.email:
+        print("\n--- email ---\n")
+        print(render_client_email(result))
     return 0
 
 
@@ -125,6 +128,7 @@ def main() -> None:
     a.add_argument("--json", type=Path, help="Write a machine-readable summary here")
     a.add_argument("--internal", action="store_true", help="Include the guarantee check in the report")
     a.add_argument("--allow-stale-prices", action="store_true")
+    a.add_argument("--email", action="store_true", help="Print the three-line client reply")
     a.add_argument("--eval-set", type=Path, help="Eval JSONL (id, workload, input, checks)")
     a.add_argument("--eval-baseline", type=Path, help="Baseline model outputs JSONL")
     a.add_argument("--eval-candidate", type=Path, help="Candidate model outputs JSONL")

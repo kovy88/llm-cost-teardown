@@ -15,7 +15,7 @@
   - 7 savings levers;
   - Markdown/JSON report;
   - `fetch` and `fingerprint` commands;
-  - 111 tests, including schema checks against the official SDK types.
+  - 112 tests, including schema checks against the official SDK types.
 - [x] Synthetic sample company and [sample report](sample-report.md).
 - [x] Client guide: [send-your-data.md](send-your-data.md). Field mapping: [data-formats.md](data-formats.md).
 - [x] Dry-run path: `fetch` + `analyze` + `eval` on synthetic data; still do one pass on your own real account.
@@ -25,13 +25,13 @@
 
 ## D6–10: channels
 
-- [ ] Upwork + Malt profiles with a fixed-price "project catalogue" (free estimate, then the 1,900 USD audit). Every day, answer jobs matching OpenAI / LLM / RAG / cost / chatbot, and quote a fixed price.
-- [ ] Post the article (LinkedIn, Hacker News "Show HN" for the tool, r/LocalLLaMA / r/OpenAI where relevant).
+- [ ] Paste [channels.md](channels.md) into Upwork + Malt (fixed $1,900, then answer OpenAI / LLM / RAG / cost jobs).
+- [ ] Post the LinkedIn text and the Show HN text from [channels.md](channels.md). Article source: [article-19k-bill.md](article-19k-bill.md).
 
 ## D11–20: outreach
 
-- [ ] Reach 60 companies with public AI features, using the templates in [outreach.md](outreach.md). Sources: Product Hunt, the YC list, CzechInvest / StartupJobs.
-- [ ] Track them in a simple sheet: company, trigger, contact, date, reply, estimate sent, call.
+- [ ] Send the six drafts in [prospects.md](prospects.md). Fill `{first_name}` from LinkedIn. Track status in that file.
+- [ ] Extend the list toward 60 (Product Hunt, YC, StartupJobs). Same rule: a public AI feature, no insurers, skip obvious sub-$3k spend.
 
 ## D21–30: first proof
 

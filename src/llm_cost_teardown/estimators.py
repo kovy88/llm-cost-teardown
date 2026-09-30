@@ -51,6 +51,8 @@ class Lever:
     method: str = "scenario"
     evidence: list[str] = field(default_factory=list)
     actions: list[str] = field(default_factory=list)
+    snippets: list[str] = field(default_factory=list)
+    meta: dict = field(default_factory=dict)
     table: list[dict] = field(default_factory=list)
 
     def add(self, amounts: Triple) -> None:
@@ -263,6 +265,33 @@ def _simulate_cache(df: pd.DataFrame, price: pricing.ModelPrice, ttl: float, wri
     return (hit * price.cached_input + write * write_price + rest * price.input) / 1e6 * in_scale
 
 
+def _stable_prefix_chars(df: pd.DataFrame) -> int | None:
+    """Deepest prompt block shared by at least half the logged requests, in characters."""
+    rows: list[tuple[list, list]] = []
+    for hashes, chars in zip(df["prefix_hashes"], df["prefix_chars"], strict=True):
+        if isinstance(hashes, list) and isinstance(chars, list) and hashes and len(hashes) == len(chars):
+            rows.append((hashes, chars))
+    if len(rows) < 5:
+        return None
+    depth = max(len(hashes) for hashes, _ in rows)
+    best: int | None = None
+    for k in range(depth):
+        counts: dict[str, int] = {}
+        char_at: dict[str, list[int]] = {}
+        for hashes, chars in rows:
+            if k >= len(hashes):
+                continue
+            counts[hashes[k]] = counts.get(hashes[k], 0) + 1
+            char_at.setdefault(hashes[k], []).append(int(chars[k]))
+        if not counts:
+            break
+        top, n = max(counts.items(), key=lambda item: item[1])
+        if n / len(rows) < 0.5:
+            break
+        best = int(np.median(char_at[top]))
+    return best
+
+
 def _measured_cache_rates(requests: pd.DataFrame, lever: Lever) -> dict[str, Triple]:
     rates = {}
     for key, df in _priced(requests).groupby("model_key"):
@@ -282,6 +311,11 @@ def _measured_cache_rates(requests: pd.DataFrame, lever: Lever) -> dict[str, Tri
             continue
         rate = best / total_cost
         rates[key] = _scale(CACHE_REALISATION, rate)
+        lever.meta.setdefault("cache", {})[key] = {
+            "ttl": label,
+            "prefix_chars": _stable_prefix_chars(df),
+            "vendor": price.vendor,
+        }
         hit_now = df["cache_read_tokens"].sum() / max(total_input(df).sum(), 1)
         if rate < 0.01:
             lever.evidence.append(
@@ -546,7 +580,11 @@ LEVERS = [lever_migration, lever_routing, lever_caching, lever_batch, lever_outp
 
 
 def run_levers(ctx: Context) -> list[Lever]:
-    return [fn(ctx) for fn in LEVERS]
+    from llm_cost_teardown.fixes import apply_fixes
+
+    levers = [fn(ctx) for fn in LEVERS]
+    apply_fixes(ctx, levers)
+    return levers
 
 
 def combine(levers: list[Lever], monthly_spend: float) -> dict[str, float]:

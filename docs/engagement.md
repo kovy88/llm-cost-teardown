@@ -16,11 +16,11 @@ What you actually do when someone replies. Keep this next to the terminal.
 
 ```bash
 uv run llm-cost-teardown analyze data/private/*.json \
-  --client "{Company}" --report data/private/report.md --internal
+  --client "{Company}" --report data/private/report.md --internal --email
 ```
 
-4. Read the **Internal** guarantee line. If conservative annual saving is under $5,700, say so in the email and do not sell the audit.
-5. Send `report.md` within 48 hours plus three lines: top lever, annual base saving, which rows are still scenario (need logs + eval).
+4. Read the **Internal** guarantee line and the printed email. If conservative annual saving is under $5,700, the email already says not to sell the audit. Send that version.
+5. Send `report.md` within 48 hours. The `--email` block is the three lines: top lever, annual base saving, which row is still a scenario.
 6. Propose a 20-minute call.
 
 ## 2. They buy the $1,900 audit

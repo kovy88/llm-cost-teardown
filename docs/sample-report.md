@@ -1,6 +1,6 @@
 # LLM cost teardown - Acme Helpdesk AI
 
-_Generated 2026-09-29 · usage 2026-08-27 to 2026-09-26 (30 days) · list prices verified 2026-09-29_
+_Generated 2026-09-30 · usage 2026-08-27 to 2026-09-26 (30 days) · list prices verified 2026-09-29_
 
 ## Summary
 
@@ -87,6 +87,20 @@ What to change:
 - Swap the model id behind a feature flag, run the eval set on old vs new model, then roll out.
 - Re-check output length after the switch; newer models can be more verbose or reason longer.
 
+```python
+SUCCESSOR = {
+    "claude-opus-4-1": "claude-opus-5-5",  # wrkspc_contract_review
+    "gpt-5.4": "gpt-6.1-sol",  # proj_support_chat
+    "claude-sonnet-4-5": "claude-sonnet-5-5",  # wrkspc_rag_answers
+    "gpt-5-mini": "gpt-6-luna",  # proj_intent_router
+    "gpt-4o": "gpt-6.1-sol",  # proj_ticket_summaries
+}
+
+def model_for(current: str, enabled: bool) -> str:
+    """Swap behind a flag. Turn the flag on only after the eval gate passes."""
+    return SUCCESSOR.get(current, current) if enabled else current
+```
+
 ### 2. Route simple requests to a cheaper model tier
 
 _Basis: measured on your usage data._
@@ -131,6 +145,29 @@ What to change:
 - Anthropic: put `cache_control` on the last static block (or top-level automatic caching for chats).
 - OpenAI: keep prefixes byte-identical; set a stable `prompt_cache_key` per prompt template.
 
+```python
+# cache_control on the last static block. prefix_chars is the repeated prefix in the logs.
+CACHE = {
+    "claude-opus-4-1": {"ttl": "5m", "prefix_chars": 13_030},
+    "claude-sonnet-4-5": {"ttl": "1h", "prefix_chars": 11_188},
+}
+
+def cached_system(model: str, static: str, dynamic: str) -> list[dict]:
+    spec = CACHE[model]
+    return [
+        {"type": "text", "text": static, "cache_control": {"type": "ephemeral", "ttl": spec["ttl"]}},
+        {"type": "text", "text": dynamic},
+    ]
+```
+
+```python
+# prompt_cache_key per template. The prefix must stay byte-identical for the TTL below.
+PROMPT_CACHE_KEY = {
+    "gpt-5.4": "support-chat",  # 30 min TTL, prefix 15_491 chars
+    "gpt-6-astra": "sales-copilot",  # 30 min TTL, prefix 13_388 chars
+}
+```
+
 ### 4. Batch API for non-interactive workloads (50 % off)
 
 _Basis: measured on your usage data._
@@ -146,6 +183,20 @@ What to change:
 
 - Move scheduled / back-office jobs (summaries, enrichment, evals, embeddings refresh) to the Batch API.
 - Keep user-facing chat on the synchronous API; batch results arrive within 24 h.
+
+```python
+BATCH_WORKLOADS = {
+    "proj_ticket_summaries",
+}
+
+def submit_openai(client, jsonl_path: str):
+    uploaded = client.files.create(file=open(jsonl_path, "rb"), purpose="batch")
+    return client.batches.create(
+        input_file_id=uploaded.id,
+        endpoint="/v1/chat/completions",
+        completion_window="24h",
+    )
+```
 
 ### 5. Trim output and reasoning tokens
 
@@ -178,6 +229,19 @@ What to change:
 - Ask for structured output (JSON schema) instead of prose where the answer is parsed by code.
 - Lower reasoning effort on routine tasks; reserve high effort for the hard tail.
 
+```python
+# p95 of output tokens, including reasoning, with 10% headroom.
+MAX_TOKENS = {
+    "proj_intent_router": 364,
+    "proj_sales_copilot": 1186,
+    "proj_support_chat": 566,
+    "proj_ticket_summaries": 449,
+    "wrkspc_contract_review": 3549,
+    "wrkspc_email_drafts": 514,
+    "wrkspc_rag_answers": 868,
+}
+```
+
 ### 6. Remove duplicate calls and paid failures
 
 _Basis: measured on your usage data._
@@ -195,6 +259,17 @@ What to change:
 
 - Cache identical requests in the application (hash of model + prompt + params) for deterministic tasks.
 - Make retries idempotent; cap retries and stop re-sending the full prompt on client-side timeouts.
+
+```python
+# Exact repeat within 24h is paid spend on `claude-sonnet-4-5`, `gpt-4o`, `gpt-5.4`.
+def once(cache: dict, key: str, create, **params):
+    hit = cache.get(key)
+    if hit is not None:
+        return hit
+    result = create(**params)
+    cache[key] = result
+    return result
+```
 
 ## Check against the invoice
 

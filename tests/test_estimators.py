@@ -8,6 +8,7 @@ from llm_cost_teardown.estimators import (
     Context,
     Lever,
     _simulate_cache,
+    _stable_prefix_chars,
     combine,
     lever_batch,
     lever_caching,
@@ -43,6 +44,13 @@ def request_log(tmp, model, n, *, every_s=60, prompt_tokens=6_000, question=lamb
 def simulate(frame, ttl=None, write=None):
     price = pricing.PRICES[frame["model_key"].iloc[0]]
     return _simulate_cache(frame, price, ttl or price.cache_ttl_seconds, write or price.cache_write)
+
+
+def test_stable_prefix_is_the_shared_system_block(tmp):
+    frame = request_log(tmp, "claude-sonnet-4-5", 20)
+    chars = _stable_prefix_chars(frame)
+    assert chars is not None
+    assert chars > 1_000
 
 
 def test_cache_simulation_hits_on_shared_prefix(tmp):

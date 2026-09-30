@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from llm_cost_teardown.analyzer import analyze
-from llm_cost_teardown.report import render_markdown, to_json
+from llm_cost_teardown.report import render_client_email, render_markdown, to_json
 from llm_cost_teardown.samples import write_samples
 
 
@@ -43,6 +43,15 @@ def test_samples_end_to_end(samples):
     assert "guarantee threshold" not in report
     assert "guarantee threshold" in render_markdown(a, internal=True)
     assert json.loads(to_json(a))["monthly_spend_usd"] == pytest.approx(a.monthly_spend)
+    email = render_client_email(a)
+    assert "Acme" in email
+    assert "Top lever:" in email
+    assert "Annual base saving:" in email
+    assert "koval.matej88@seznam.cz" in email
+    assert "SUCCESSOR = {" in report
+    assert "MAX_TOKENS = {" in report
+    assert "BATCH_WORKLOADS" in report
+    assert "cache_control" in report
 
 
 def test_aggregates_only_still_produce_a_report(samples):
